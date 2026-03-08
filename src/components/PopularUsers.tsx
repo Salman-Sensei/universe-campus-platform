@@ -67,6 +67,8 @@ export function PopularUsers() {
     load();
   }, [user]);
 
+  const { createNotification } = useNotificationsContext();
+
   const toggleFollow = async (targetId: string) => {
     if (!user) return toast.error("Sign in to follow users");
     if (followingSet.has(targetId)) {
@@ -75,6 +77,7 @@ export function PopularUsers() {
     } else {
       await supabase.from("follows").insert({ follower_id: user.id, following_id: targetId });
       setFollowingSet((prev) => new Set(prev).add(targetId));
+      createNotification(targetId, "follow");
     }
   };
 
