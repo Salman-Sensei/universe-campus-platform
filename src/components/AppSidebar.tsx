@@ -1,7 +1,8 @@
-import { Home, User, PlusSquare, Search, LogOut, Sparkles } from "lucide-react";
+import { Home, User, PlusSquare, Search, LogOut, Sparkles, Bell } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotifications } from "@/hooks/useNotifications";
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +19,7 @@ const navItems = [
   { title: "Feed", url: "/feed", icon: Home },
   { title: "Discover", url: "/discover", icon: Search },
   { title: "Create Post", url: "/create", icon: PlusSquare },
+  { title: "Notifications", url: "/notifications", icon: Bell },
   { title: "AI Assistant", url: "/ai", icon: Sparkles },
   { title: "My Profile", url: "/profile", icon: User },
 ];
