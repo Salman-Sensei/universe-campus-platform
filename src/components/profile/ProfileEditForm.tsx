@@ -11,8 +11,8 @@ interface ProfileEditFormProps {
     favorite_music: string;
     quote: string;
     interests: string;
-    semester?: string;
-    batch?: string;
+    semester: string;
+    batch: string;
   };
   setForm: (form: ProfileEditFormProps["form"]) => void;
 }
