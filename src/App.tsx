@@ -22,6 +22,7 @@ import Notifications from "./pages/Notifications";
 import ConfessionWall from "./pages/ConfessionWall";
 import Marketplace from "./pages/Marketplace";
 import StudyPartner from "./pages/StudyPartner";
+import NotesResources from "./pages/NotesResources";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
