@@ -42,6 +42,7 @@ export default function Discover() {
     } else {
       await supabase.from("follows").insert({ follower_id: user.id, following_id: targetId });
       setFollowingSet((prev) => new Set(prev).add(targetId));
+      createNotification(targetId, "follow");
     }
   };
 
