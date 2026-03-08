@@ -2,7 +2,7 @@ import { Home, User, PlusSquare, Search, LogOut, Sparkles, Bell } from "lucide-r
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import {
   Sidebar,
   SidebarContent,
@@ -29,7 +29,7 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
   const { signOut } = useAuth();
-  const { unreadCount } = useNotifications();
+  const { unreadCount } = useNotificationsContext();
 
   const handleSignOut = async () => {
     await signOut();

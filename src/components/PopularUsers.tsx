@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,8 @@ export function PopularUsers() {
     load();
   }, [user]);
 
+  const { createNotification } = useNotificationsContext();
+
   const toggleFollow = async (targetId: string) => {
     if (!user) return toast.error("Sign in to follow users");
     if (followingSet.has(targetId)) {
@@ -74,6 +77,7 @@ export function PopularUsers() {
     } else {
       await supabase.from("follows").insert({ follower_id: user.id, following_id: targetId });
       setFollowingSet((prev) => new Set(prev).add(targetId));
+      createNotification(targetId, "follow");
     }
   };
 

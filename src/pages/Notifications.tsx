@@ -1,5 +1,5 @@
 import { AppLayout } from "@/components/AppLayout";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Bell, Heart, MessageCircle, UserPlus, CheckCheck, Loader2 } from "lucide-react";
@@ -14,7 +14,7 @@ const typeConfig = {
 };
 
 export default function Notifications() {
-  const { notifications, loading, markAllRead, unreadCount } = useNotifications();
+  const { notifications, loading, markAllRead, unreadCount } = useNotificationsContext();
 
   return (
     <AppLayout>

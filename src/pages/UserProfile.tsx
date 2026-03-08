@@ -8,6 +8,7 @@ import { usePosts } from "@/hooks/usePosts";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserPlus, UserMinus, Music, Quote, Tag, Loader2 } from "lucide-react";
+import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
@@ -45,6 +46,8 @@ export default function UserProfile() {
     load();
   }, [username, user]);
 
+  const { createNotification } = useNotificationsContext();
+
   const toggleFollow = async () => {
     if (!user || !profile) return;
     if (isFollowing) {
@@ -55,6 +58,7 @@ export default function UserProfile() {
       await supabase.from("follows").insert({ follower_id: user.id, following_id: profile.user_id });
       setIsFollowing(true);
       setFollowersCount((c) => c + 1);
+      createNotification(profile.user_id, "follow");
     }
     toast.success(isFollowing ? "Unfollowed" : "Following!");
   };

@@ -4,7 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -43,7 +43,7 @@ export function PostCard({
   likes_count, comments_count, is_liked, onRefresh,
 }: PostCardProps) {
   const { user } = useAuth();
-  const { createNotification } = useNotifications();
+  const { createNotification } = useNotificationsContext();
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -71,7 +71,7 @@ export function PostCard({
   const loadComments = async () => {
     const { data } = await supabase
       .from("comments")
-      .select("*, profiles:user_id(username, display_name, avatar_url)")
+      .select("*, profiles!comments_user_id_profiles_fkey(username, display_name, avatar_url)")
       .eq("post_id", id)
       .order("created_at", { ascending: true });
     if (data) setComments(data as unknown as Comment[]);
