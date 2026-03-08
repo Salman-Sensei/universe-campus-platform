@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { RoleBadge } from "@/components/RoleBadge";
 import { Camera, ImagePlus, Pencil, Save } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -25,11 +26,7 @@ export function ProfileHeader({
       {/* Cover Banner */}
       <label className="cursor-pointer group block relative h-[250px] overflow-hidden">
         {profile?.banner_url ? (
-          <img
-            src={profile.banner_url}
-            alt="Profile banner"
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
+          <img src={profile.banner_url} alt="Profile banner" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10" />
         )}
@@ -45,7 +42,6 @@ export function ProfileHeader({
       {/* Avatar + Name overlay area */}
       <div className="px-6 -mt-16 relative z-10">
         <div className="flex items-end justify-between">
-          {/* Avatar */}
           <label className="cursor-pointer group relative">
             <Avatar className="h-28 w-28 ring-4 ring-card shadow-lg">
               <AvatarImage src={profile?.avatar_url || undefined} />
@@ -59,7 +55,6 @@ export function ProfileHeader({
             <input type="file" accept="image/*" onChange={onAvatarUpload} className="hidden" />
           </label>
 
-          {/* Edit button */}
           <Button
             variant="ghost"
             size="sm"
@@ -74,10 +69,26 @@ export function ProfileHeader({
           </Button>
         </div>
 
-        {/* Name & username */}
         <div className="mt-3 mb-4">
-          <h2 className="text-2xl font-display font-bold text-foreground">{displayName}</h2>
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="text-2xl font-display font-bold text-foreground">{displayName}</h2>
+            <RoleBadge role={(profile as any)?.role} size="md" />
+          </div>
           <p className="text-sm text-muted-foreground">@{profile?.username || "user"}</p>
+          {(profile as any)?.role === "student" && ((profile as any)?.semester || (profile as any)?.batch) && (
+            <p className="text-xs text-muted-foreground mt-1">
+              {(profile as any)?.semester && <span>{(profile as any).semester}</span>}
+              {(profile as any)?.semester && (profile as any)?.batch && <span> · </span>}
+              {(profile as any)?.batch && <span>Batch {(profile as any).batch}</span>}
+            </p>
+          )}
+          {(profile as any)?.role === "faculty" && (profile as any)?.subjects?.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {((profile as any).subjects as string[]).map((s) => (
+                <span key={s} className="text-[10px] bg-accent/15 text-accent px-2 py-0.5 rounded-full font-medium">{s}</span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

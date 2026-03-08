@@ -4,6 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
+import { RoleBadge } from "@/components/RoleBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,7 +66,7 @@ export default function Discover() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or interest..."
+            placeholder="Search by name, interest, or role..."
             className="pl-11 bg-surface/40 border-border/30 rounded-xl h-11 focus:ring-1 focus:ring-primary/30"
           />
         </div>
@@ -84,6 +85,7 @@ export default function Discover() {
             {filtered.map((p, i) => {
               const name = p.display_name || p.username || "Anonymous";
               const isFollowing = followingSet.has(p.user_id);
+              const profileAny = p as any;
               return (
                 <motion.div
                   key={p.id}
@@ -99,14 +101,13 @@ export default function Discover() {
                       <AvatarFallback className="bg-surface text-primary font-semibold">{name.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
-                      <p className="font-semibold text-foreground group-hover:text-primary transition-colors text-sm truncate">{name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-foreground group-hover:text-primary transition-colors text-sm truncate">{name}</p>
+                        <RoleBadge role={profileAny.role} />
+                      </div>
                       {p.bio && <p className="text-xs text-muted-foreground truncate mt-0.5">{p.bio}</p>}
-                      {p.interests && p.interests.length > 0 && (
-                        <div className="flex gap-1 mt-1.5 flex-wrap">
-                          {p.interests.slice(0, 3).map((tag) => (
-                            <span key={tag} className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">{tag}</span>
-                          ))}
-                        </div>
+                      {profileAny.role === "student" && profileAny.semester && (
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{profileAny.semester}{profileAny.batch ? ` · Batch ${profileAny.batch}` : ""}</p>
                       )}
                     </div>
                   </Link>

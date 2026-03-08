@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
+import { RoleBadge } from "@/components/RoleBadge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,6 +16,7 @@ interface PostProfile {
   username: string | null;
   display_name: string | null;
   avatar_url: string | null;
+  role?: string | null;
 }
 
 interface Comment {
@@ -56,7 +58,6 @@ export function PostCard({
 
   const handleLike = async () => {
     if (!user) return toast.error("Sign in to like posts");
-    // Optimistic update
     setLiked(!liked);
     setLikesNum(liked ? likesNum - 1 : likesNum + 1);
     if (liked) {
@@ -112,21 +113,21 @@ export function PostCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className="glass rounded-2xl overflow-hidden group hover:border-border transition-all duration-300"
     >
-      <div className="p-5 md:p-6 space-y-4">
+      <div className="p-5 space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
           <Link to={`/user/${profiles?.username || user_id}`} className="flex items-center gap-3 group/link">
-            <div className="relative">
-              <Avatar className="h-11 w-11 ring-2 ring-border/50 group-hover/link:ring-primary/40 transition-all duration-300">
-                <AvatarImage src={profiles?.avatar_url || undefined} />
-                <AvatarFallback className="bg-surface text-primary font-semibold text-sm">{initials}</AvatarFallback>
-              </Avatar>
-              <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-primary/80 border-2 border-card" />
-            </div>
+            <Avatar className="h-10 w-10 ring-2 ring-border/50 group-hover/link:ring-primary/40 transition-all duration-300">
+              <AvatarImage src={profiles?.avatar_url || undefined} />
+              <AvatarFallback className="bg-surface text-primary font-semibold text-sm">{initials}</AvatarFallback>
+            </Avatar>
             <div>
-              <p className="font-semibold text-foreground group-hover/link:text-primary transition-colors text-sm">{displayName}</p>
+              <div className="flex items-center gap-2">
+                <p className="font-semibold text-foreground group-hover/link:text-primary transition-colors text-sm">{displayName}</p>
+                <RoleBadge role={profiles?.role} />
+              </div>
               <p className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
+                @{profiles?.username || "user"} · {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
               </p>
             </div>
           </Link>
@@ -142,12 +143,8 @@ export function PostCard({
 
         {/* Image */}
         {image_url && (
-          <div className="relative -mx-5 md:-mx-6 overflow-hidden">
-            <img
-              src={image_url}
-              alt="Post"
-              className="w-full max-h-[28rem] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
-            />
+          <div className="relative -mx-5 overflow-hidden">
+            <img src={image_url} alt="Post" className="w-full max-h-[28rem] object-cover transition-transform duration-500 group-hover:scale-[1.01]" />
           </div>
         )}
 
@@ -156,15 +153,10 @@ export function PostCard({
           <button
             onClick={handleLike}
             className={`flex items-center gap-1.5 text-sm rounded-full px-3 py-1.5 transition-all duration-200 ${
-              liked
-                ? "text-primary bg-primary/10"
-                : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+              liked ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"
             }`}
           >
-            <motion.div
-              animate={liked ? { scale: [1, 1.3, 1] } : {}}
-              transition={{ duration: 0.3 }}
-            >
+            <motion.div animate={liked ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
               <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
             </motion.div>
             <span className="font-medium">{likesNum}</span>
@@ -195,7 +187,7 @@ export function PostCard({
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="border-t border-border/40 overflow-hidden"
           >
-            <div className="p-5 md:p-6 space-y-3">
+            <div className="p-5 space-y-3">
               {comments.map((c, i) => (
                 <motion.div
                   key={c.id}

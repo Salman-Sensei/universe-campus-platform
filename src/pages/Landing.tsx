@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Rocket, Users, Sparkles, Zap, Globe, ArrowRight } from "lucide-react";
+import { GraduationCap, Users, Sparkles, BookOpen, ArrowRight, Shield } from "lucide-react";
 import { motion } from "framer-motion";
-import heroBg from "@/assets/hero-bg.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -22,13 +21,16 @@ export default function Landing() {
       {/* Nav */}
       <nav className="fixed top-0 w-full z-50 glass-strong">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-2xl font-display font-bold gradient-text"
+            className="flex items-center gap-2"
           >
-            SpaceHub
-          </motion.h1>
+            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
+              <GraduationCap className="h-4.5 w-4.5 text-primary-foreground" />
+            </div>
+            <h1 className="text-xl font-display font-bold gradient-text">UniVerse</h1>
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -50,17 +52,7 @@ export default function Landing() {
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center">
-        {/* Background layers */}
-        <div className="absolute inset-0">
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-25 scale-110"
-            style={{ backgroundImage: `url(${heroBg})` }}
-          />
-          <div className="absolute inset-0 gradient-mesh" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
-        </div>
-
-        {/* Floating orbs */}
+        <div className="absolute inset-0 gradient-mesh" />
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             animate={{ y: [-20, 20, -20] }}
@@ -72,11 +64,6 @@ export default function Landing() {
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             className="absolute top-1/3 right-[10%] w-96 h-96 rounded-full bg-accent/5 blur-3xl"
           />
-          <motion.div
-            animate={{ y: [10, -15, 10] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-1/4 left-1/2 w-64 h-64 rounded-full bg-primary/3 blur-3xl"
-          />
         </div>
 
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto pt-20">
@@ -87,7 +74,7 @@ export default function Landing() {
             className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-8"
           >
             <span className="h-2 w-2 rounded-full gradient-primary animate-pulse-glow" />
-            <span className="text-sm text-muted-foreground font-medium">Now in public beta</span>
+            <span className="text-sm text-muted-foreground font-medium">Your Academic Social Network</span>
           </motion.div>
 
           <motion.h2
@@ -96,9 +83,9 @@ export default function Landing() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-5xl sm:text-6xl md:text-8xl font-display font-extrabold mb-6 leading-[0.95] tracking-tighter text-balance"
           >
-            Your Space.{" "}
+            Connect.{" "}
             <br className="hidden sm:block" />
-            <span className="gradient-text">Your Rules.</span>
+            <span className="gradient-text">Learn. Grow.</span>
           </motion.h2>
 
           <motion.p
@@ -107,7 +94,7 @@ export default function Landing() {
             transition={{ delay: 0.25, duration: 0.7 }}
             className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed text-balance"
           >
-            The social platform where you own your identity. Build a profile that's unmistakably you, powered by AI.
+            The social platform where university students and faculty share academic updates, collaborate on ideas, and build meaningful connections.
           </motion.p>
 
           <motion.div
@@ -118,8 +105,8 @@ export default function Landing() {
           >
             <Link to="/register">
               <Button size="lg" className="gradient-primary text-primary-foreground font-bold text-base px-8 h-13 rounded-full glow-border group">
-                <Rocket className="mr-2 h-5 w-5 group-hover:animate-float" />
-                Launch Your Profile
+                <GraduationCap className="mr-2 h-5 w-5 group-hover:animate-float" />
+                Join UniVerse
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
@@ -130,7 +117,6 @@ export default function Landing() {
             </Link>
           </motion.div>
 
-          {/* Stats row */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -138,9 +124,9 @@ export default function Landing() {
             className="mt-20 flex justify-center gap-12 text-center"
           >
             {[
-              { value: "10K+", label: "Users" },
+              { value: "10K+", label: "Students" },
+              { value: "500+", label: "Faculty" },
               { value: "50K+", label: "Posts" },
-              { value: "99%", label: "Uptime" },
             ].map((s) => (
               <div key={s.label}>
                 <p className="text-2xl md:text-3xl font-display font-bold text-foreground">{s.value}</p>
@@ -165,8 +151,8 @@ export default function Landing() {
               Features
             </motion.p>
             <motion.h3 variants={fadeUp} custom={1} className="text-3xl md:text-5xl font-display font-bold text-foreground text-balance">
-              Everything you need to{" "}
-              <span className="gradient-text">stand out</span>
+              Built for{" "}
+              <span className="gradient-text">academia</span>
             </motion.h3>
           </motion.div>
 
@@ -179,18 +165,18 @@ export default function Landing() {
           >
             {[
               {
-                icon: Users, title: "Rich Profiles",
-                desc: "Bio, music taste, quotes, interests — express yourself fully. No generic boxes.",
+                icon: Users, title: "Academic Profiles",
+                desc: "Showcase your semester, batch, subjects, and research interests. Connect with peers who share your academic journey.",
                 gradient: "from-primary/20 to-primary/5",
               },
               {
-                icon: Sparkles, title: "AI Writing Assistant",
-                desc: "Get personalized post suggestions and polish your writing with AI that knows your style.",
+                icon: Sparkles, title: "AI-Powered Feed",
+                desc: "Smart content ranking and personalized recommendations based on your academic interests and engagement.",
                 gradient: "from-accent/20 to-accent/5",
               },
               {
-                icon: Globe, title: "Global Feed",
-                desc: "Discover fresh voices from the community. Real posts from real people, no algorithm games.",
+                icon: Shield, title: "Safe Environment",
+                desc: "NLP-powered moderation keeps the platform professional and respectful for academic discourse.",
                 gradient: "from-primary/15 to-accent/10",
               },
             ].map((f, i) => (
@@ -227,12 +213,12 @@ export default function Landing() {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
             <div className="relative z-10">
-              <Zap className="h-10 w-10 text-primary mx-auto mb-5 animate-pulse-glow" />
+              <BookOpen className="h-10 w-10 text-primary mx-auto mb-5 animate-pulse-glow" />
               <h3 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4 text-balance">
-                Ready to claim your space?
+                Ready to join your academic community?
               </h3>
               <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                Join thousands of people building their digital identity on SpaceHub.
+                Join thousands of students and faculty building connections on UniVerse.
               </p>
               <Link to="/register">
                 <Button size="lg" className="gradient-primary text-primary-foreground font-bold rounded-full px-10 h-13 glow-border">
@@ -247,8 +233,13 @@ export default function Landing() {
       {/* Footer */}
       <footer className="border-t border-border/30 py-10 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="font-display font-bold text-lg gradient-text">SpaceHub</span>
-          <p className="text-muted-foreground text-sm">© 2026 SpaceHub. Built for dreamers.</p>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md gradient-primary flex items-center justify-center">
+              <GraduationCap className="h-3.5 w-3.5 text-primary-foreground" />
+            </div>
+            <span className="font-display font-bold text-lg gradient-text">UniVerse</span>
+          </div>
+          <p className="text-muted-foreground text-sm">© 2026 UniVerse. Built for academics.</p>
         </div>
       </footer>
     </div>

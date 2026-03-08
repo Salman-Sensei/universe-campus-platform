@@ -29,12 +29,12 @@ export default function AIAssistant() {
     setResult("");
 
     const context = profile
-      ? `User interests: ${profile.interests?.join(", ") || "none"}. Bio: ${profile.bio || "none"}. Favorite music: ${profile.favorite_music || "none"}.`
+      ? `User interests: ${profile.interests?.join(", ") || "none"}. Bio: ${profile.bio || "none"}.`
       : "";
 
     const systemPrompt = mode === "suggest"
-      ? `You are a creative social media assistant. Based on the user's profile and interests, suggest 3 engaging post ideas. Keep them fun, authentic, and varied. Format with emojis and clear numbering. ${context}`
-      : `You are a writing assistant. Help the user improve their social media post to be more engaging, clear, and impactful while keeping their voice. ${context}`;
+      ? `You are an academic social media assistant for UniVerse. Based on the user's profile and interests, suggest 3 engaging post ideas related to academics, campus life, or learning. Keep them professional, authentic, and varied. Format with emojis and clear numbering. ${context}`
+      : `You are an academic writing assistant for UniVerse. Help the user improve their social media post to be more engaging, clear, and professional while keeping their voice. ${context}`;
 
     const userMessage = mode === "suggest" ? prompt || "Suggest some post ideas based on my interests" : prompt;
 
@@ -101,11 +101,10 @@ export default function AIAssistant() {
             </div>
             <div>
               <h2 className="text-xl font-display font-bold text-foreground">AI Assistant</h2>
-              <p className="text-xs text-muted-foreground">Powered by AI to boost your content</p>
+              <p className="text-xs text-muted-foreground">Powered by AI to boost your academic content</p>
             </div>
           </div>
 
-          {/* Mode tabs */}
           <div className="flex gap-2 p-1 bg-surface/60 rounded-xl w-fit mb-6">
             <button
               onClick={() => setMode("suggest")}
