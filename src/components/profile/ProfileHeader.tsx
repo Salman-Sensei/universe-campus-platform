@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { RoleBadge } from "@/components/RoleBadge";
+import { FounderBadge } from "@/components/FounderBadge";
 import { Camera, ImagePlus, Pencil, Save } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -73,6 +74,7 @@ export function ProfileHeader({
           <div className="flex items-center gap-2 mb-1">
             <h2 className="text-2xl font-display font-bold text-foreground">{displayName}</h2>
             <RoleBadge role={(profile as any)?.role} size="md" />
+            {(profile as any)?.founder_badge && <FounderBadge size="md" />}
           </div>
           <p className="text-sm text-muted-foreground">@{profile?.username || "user"}</p>
           {(profile as any)?.role === "student" && ((profile as any)?.semester || (profile as any)?.batch) && (

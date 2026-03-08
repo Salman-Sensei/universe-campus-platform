@@ -8,6 +8,7 @@ import { Loader2, PenSquare, Sparkles, Flame, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { StoriesBar } from "@/components/StoriesBar";
 
 export default function Feed() {
   const { posts, loading, refresh } = usePosts();
@@ -17,6 +18,9 @@ export default function Feed() {
       <div className="max-w-[1100px] mx-auto p-4 md:p-6 flex gap-6">
         {/* Main feed column */}
         <div className="flex-1 min-w-0 space-y-5">
+          {/* Stories bar */}
+          <StoriesBar />
+
           {/* Quick compose bar */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}

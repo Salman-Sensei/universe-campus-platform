@@ -19,6 +19,7 @@ import UserProfile from "./pages/UserProfile";
 import Discover from "./pages/Discover";
 import AIAssistant from "./pages/AIAssistant";
 import Notifications from "./pages/Notifications";
+import ConfessionWall from "./pages/ConfessionWall";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,6 +68,7 @@ function AppRoutes() {
       <Route path="/discover" element={<OnboardingGuard><Discover /></OnboardingGuard>} />
       <Route path="/ai" element={<OnboardingGuard><AIAssistant /></OnboardingGuard>} />
       <Route path="/notifications" element={<OnboardingGuard><Notifications /></OnboardingGuard>} />
+      <Route path="/confessions" element={<OnboardingGuard><ConfessionWall /></OnboardingGuard>} />
       <Route path="/user/:username" element={<OnboardingGuard><UserProfile /></OnboardingGuard>} />
       <Route path="*" element={<NotFound />} />
     </Routes>

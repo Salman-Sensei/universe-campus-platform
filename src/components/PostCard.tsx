@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { RoleBadge } from "@/components/RoleBadge";
+import { FounderBadge } from "@/components/FounderBadge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,6 +18,7 @@ interface PostProfile {
   display_name: string | null;
   avatar_url: string | null;
   role?: string | null;
+  founder_badge?: boolean | null;
 }
 
 interface Comment {
@@ -132,6 +134,7 @@ export function PostCard({
               <div className="flex items-center gap-2">
                 <p className="font-semibold text-foreground group-hover/link:text-primary transition-colors text-sm">{displayName}</p>
                 <RoleBadge role={profiles?.role} />
+                {profiles?.founder_badge && <FounderBadge />}
               </div>
               <p className="text-xs text-muted-foreground">
                 @{profiles?.username || "user"} · {formatDistanceToNow(new Date(created_at), { addSuffix: true })}

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
 import { usePosts } from "@/hooks/usePosts";
 import { RoleBadge } from "@/components/RoleBadge";
+import { FounderBadge } from "@/components/FounderBadge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserPlus, UserMinus, Music, Quote, Tag, Loader2, GraduationCap, BookOpen } from "lucide-react";
@@ -115,6 +116,7 @@ export default function UserProfile() {
             <div className="flex items-center gap-2.5 mb-1">
               <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">{displayName}</h1>
               <RoleBadge role={profile.role} size="md" />
+              {(profile as any).founder_badge && <FounderBadge size="md" />}
             </div>
             <p className="text-sm text-muted-foreground mb-4">@{profile.username || "user"}</p>
 
