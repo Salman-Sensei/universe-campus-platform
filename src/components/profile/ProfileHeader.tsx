@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { RoleBadge } from "@/components/RoleBadge";
+import { FounderBadge } from "@/components/FounderBadge";
 import { Camera, ImagePlus, Pencil, Save } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
