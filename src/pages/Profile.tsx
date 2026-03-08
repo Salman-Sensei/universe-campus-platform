@@ -84,6 +84,8 @@ export default function Profile() {
       favorite_music: form.favorite_music || null,
       quote: form.quote || null,
       interests: form.interests ? form.interests.split(",").map((s) => s.trim()).filter(Boolean) : null,
+      semester: form.semester || null,
+      batch: form.batch || null,
     }).eq("user_id", user.id);
 
     if (error) toast.error("Failed to update profile");
