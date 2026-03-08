@@ -19,6 +19,7 @@ import UserProfile from "./pages/UserProfile";
 import Discover from "./pages/Discover";
 import AIAssistant from "./pages/AIAssistant";
 import Notifications from "./pages/Notifications";
+import ConfessionWall from "./pages/ConfessionWall";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
