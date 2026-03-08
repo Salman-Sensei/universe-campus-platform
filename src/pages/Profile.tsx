@@ -1,13 +1,14 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
 import { usePosts } from "@/hooks/usePosts";
-import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileEditForm } from "@/components/profile/ProfileEditForm";
-import { ProfileDetails } from "@/components/profile/ProfileDetails";
-import { Loader2 } from "lucide-react";
+import { RoleBadge } from "@/components/RoleBadge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Loader2, Camera, ImagePlus, Pencil, Save, Music, Quote, Tag, GraduationCap, BookOpen, Users, UserCheck } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
@@ -17,6 +18,8 @@ export default function Profile() {
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const [form, setForm] = useState({
     display_name: "",
     bio: "",
@@ -29,7 +32,8 @@ export default function Profile() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("*").eq("user_id", user.id).single().then(({ data }) => {
+    const load = async () => {
+      const { data } = await supabase.from("profiles").select("*").eq("user_id", user.id).single();
       if (data) {
         setProfile(data);
         setForm({
@@ -40,8 +44,15 @@ export default function Profile() {
           interests: data.interests?.join(", ") || "",
         });
       }
+      const [followers, following] = await Promise.all([
+        supabase.from("follows").select("id", { count: "exact" }).eq("following_id", user.id),
+        supabase.from("follows").select("id", { count: "exact" }).eq("follower_id", user.id),
+      ]);
+      setFollowersCount(followers.count || 0);
+      setFollowingCount(following.count || 0);
       setLoading(false);
-    });
+    };
+    load();
   }, [user]);
 
   const refreshProfile = async () => {
@@ -113,37 +124,172 @@ export default function Profile() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-b-2xl overflow-hidden noise"
+          className="rounded-2xl overflow-hidden border border-border/50 bg-card"
         >
-          <ProfileHeader
-            profile={profile}
-            displayName={displayName}
-            editing={editing}
-            onEditToggle={() => editing ? handleSave() : setEditing(true)}
-            onAvatarUpload={handleAvatarUpload}
-            onBannerUpload={handleBannerUpload}
-          />
+          {/* Cover Banner */}
+          <label className="cursor-pointer group block relative h-[220px] md:h-[280px] overflow-hidden">
+            {profile?.banner_url ? (
+              <img src={profile.banner_url} alt="Profile banner" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-primary/40 via-accent/30 to-primary/20 relative">
+                <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--primary)) 0%, transparent 50%), radial-gradient(circle at 80% 20%, hsl(var(--accent)) 0%, transparent 50%)' }} />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-background/0 group-hover:bg-background/40 transition-all duration-300 flex items-center justify-center">
+              <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 flex items-center gap-2 bg-background/80 backdrop-blur-md text-foreground text-sm font-medium px-5 py-2.5 rounded-full shadow-lg">
+                <ImagePlus className="h-4 w-4" />
+                Change Banner
+              </div>
+            </div>
+            <input type="file" accept="image/*" onChange={handleBannerUpload} className="hidden" />
+          </label>
 
-          <div className="px-6 pb-6">
+          {/* Profile Info Section */}
+          <div className="px-5 md:px-8 pb-6 relative">
+            {/* Avatar - overlapping banner */}
+            <div className="flex items-end justify-between -mt-16 relative z-10 mb-4">
+              <label className="cursor-pointer group relative">
+                <Avatar className="h-32 w-32 ring-4 ring-card shadow-xl border-2 border-background">
+                  <AvatarImage src={profile?.avatar_url || undefined} className="object-cover" />
+                  <AvatarFallback className="bg-muted text-primary text-3xl font-bold">
+                    {displayName.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 bg-background/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-200 backdrop-blur-sm">
+                  <Camera className="h-6 w-6 text-foreground" />
+                </div>
+                <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
+              </label>
+
+              <Button
+                variant={editing ? "default" : "outline"}
+                size="sm"
+                onClick={() => editing ? handleSave() : setEditing(true)}
+                className="rounded-full font-semibold px-5 mt-16"
+              >
+                {editing ? (
+                  <><Save className="mr-1.5 h-4 w-4" /> Save</>
+                ) : (
+                  <><Pencil className="mr-1.5 h-4 w-4" /> Edit Profile</>
+                )}
+              </Button>
+            </div>
+
+            {/* Name + Role */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2.5 mb-1">
+                <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">{displayName}</h1>
+                <RoleBadge role={profile?.role} size="md" />
+              </div>
+              <p className="text-sm text-muted-foreground">@{profile?.username || "user"}</p>
+            </div>
+
+            {/* Follower Counts */}
+            <div className="flex gap-5 mb-5">
+              <div className="flex items-center gap-1.5 text-sm">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <strong className="text-foreground font-semibold">{followersCount}</strong>
+                <span className="text-muted-foreground">followers</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-sm">
+                <UserCheck className="h-4 w-4 text-muted-foreground" />
+                <strong className="text-foreground font-semibold">{followingCount}</strong>
+                <span className="text-muted-foreground">following</span>
+              </div>
+            </div>
+
+            {/* Academic Info Card */}
+            {profile?.role && (profile?.role === "student" || profile?.role === "faculty") && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="rounded-xl border border-border/50 bg-muted/30 p-4 mb-5"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  {profile.role === "student" ? (
+                    <GraduationCap className="h-4.5 w-4.5 text-primary" />
+                  ) : (
+                    <BookOpen className="h-4.5 w-4.5 text-primary" />
+                  )}
+                  <h3 className="text-sm font-semibold text-foreground">
+                    {profile.role === "student" ? "Academic Info" : "Faculty Info"}
+                  </h3>
+                </div>
+                {profile.role === "student" && (profile.semester || profile.batch) && (
+                  <div className="flex flex-wrap gap-2">
+                    {profile.semester && (
+                      <span className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full font-medium">
+                        {profile.semester}
+                      </span>
+                    )}
+                    {profile.batch && (
+                      <span className="text-xs bg-accent/10 text-accent px-3 py-1.5 rounded-full font-medium">
+                        Batch {profile.batch}
+                      </span>
+                    )}
+                  </div>
+                )}
+                {profile.role === "faculty" && profile.subjects && profile.subjects.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.subjects.map((s) => (
+                      <span key={s} className="text-xs bg-accent/10 text-accent px-3 py-1.5 rounded-full font-medium">{s}</span>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Bio & Details */}
             <AnimatePresence mode="wait">
               {editing ? (
                 <ProfileEditForm key="edit" form={form} setForm={setForm} />
               ) : (
-                <ProfileDetails key="view" profile={profile} />
+                <motion.div
+                  key="view"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="space-y-4"
+                >
+                  {profile?.bio && (
+                    <p className="text-foreground/80 leading-relaxed text-[15px]">{profile.bio}</p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    {profile?.favorite_music && (
+                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground bg-muted/50 rounded-full px-3.5 py-1.5 border border-border/30">
+                        <Music className="h-3.5 w-3.5 text-primary" /> {profile.favorite_music}
+                      </span>
+                    )}
+                    {profile?.quote && (
+                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground bg-muted/50 rounded-full px-3.5 py-1.5 italic border border-border/30">
+                        <Quote className="h-3.5 w-3.5 text-primary" /> "{profile.quote}"
+                      </span>
+                    )}
+                  </div>
+                  {profile?.interests && profile.interests.length > 0 && (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Tag className="h-3.5 w-3.5 text-primary" />
+                      {profile.interests.map((i) => (
+                        <span key={i} className="text-xs bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium">{i}</span>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
         </motion.div>
 
-        <div className="px-4 md:px-6 mt-6 space-y-4">
-          <div className="flex items-center justify-between">
+        {/* Posts Section */}
+        <div className="px-1 mt-6 space-y-4">
+          <div className="flex items-center justify-between px-1">
             <h3 className="text-lg font-display font-semibold text-foreground">Your Posts</h3>
-            <span className="text-xs text-muted-foreground">{posts.length} posts</span>
+            <span className="text-xs text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-full">{posts.length} posts</span>
           </div>
           {postsLoading ? (
             <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
           ) : posts.length === 0 ? (
-            <div className="text-center py-16 glass rounded-2xl">
+            <div className="text-center py-16 rounded-2xl border border-border/50 bg-card">
               <p className="text-muted-foreground text-sm">No posts yet. Share your first thought!</p>
             </div>
           ) : (
