@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { motion } from "framer-motion";
 import { GraduationCap } from "lucide-react";
 
@@ -21,7 +22,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 <span className="font-display font-bold text-foreground tracking-tight hidden sm:inline">UniVerse</span>
               </div>
             </div>
-            <ThemeSwitcher />
+            <div className="flex items-center gap-1">
+              <NotificationDropdown />
+              <ThemeSwitcher />
+            </div>
           </header>
           <motion.main
             initial={{ opacity: 0 }}

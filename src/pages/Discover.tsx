@@ -5,13 +5,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { RoleBadge } from "@/components/RoleBadge";
+import { ReputationBadge } from "@/components/ReputationBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UserPlus, UserCheck, Search, Loader2, Users, Compass } from "lucide-react";
+import { UserPlus, UserCheck, Search, Loader2, Users, Compass, Flame, TrendingUp, BookOpen, Award } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
+
+type Tab = "people" | "trending" | "faculty";
 
 export default function Discover() {
   const { user } = useAuth();
@@ -20,6 +23,8 @@ export default function Discover() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [followingSet, setFollowingSet] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<Tab>("people");
+  const [reputations, setReputations] = useState<Record<string, { points: number; badge: string | null }>>({});
 
   useEffect(() => {
     const load = async () => {
@@ -29,6 +34,13 @@ export default function Discover() {
       if (user) {
         const { data: follows } = await supabase.from("follows").select("following_id").eq("follower_id", user.id);
         if (follows) setFollowingSet(new Set(follows.map((f) => f.following_id)));
+      }
+      // Load reputations
+      const { data: repData } = await supabase.from("user_reputation").select("user_id, points, badge");
+      if (repData) {
+        const map: Record<string, { points: number; badge: string | null }> = {};
+        repData.forEach((r) => { map[r.user_id] = { points: r.points, badge: r.badge }; });
+        setReputations(map);
       }
       setLoading(false);
     };
@@ -48,14 +60,28 @@ export default function Discover() {
   };
 
   const filtered = profiles.filter((p) => {
-    if (!search) return true;
+    if (!search) {
+      if (activeTab === "faculty") return p.role === "faculty";
+      return true;
+    }
     const q = search.toLowerCase();
     return p.username?.toLowerCase().includes(q) || p.display_name?.toLowerCase().includes(q) || p.interests?.some((i) => i.toLowerCase().includes(q));
   });
 
+  // Sort by reputation for trending tab
+  const sorted = activeTab === "trending"
+    ? [...filtered].sort((a, b) => (reputations[b.user_id]?.points || 0) - (reputations[a.user_id]?.points || 0))
+    : filtered;
+
+  const tabs: { id: Tab; label: string; icon: typeof Users }[] = [
+    { id: "people", label: "All People", icon: Users },
+    { id: "trending", label: "Top Contributors", icon: TrendingUp },
+    { id: "faculty", label: "Faculty", icon: BookOpen },
+  ];
+
   return (
     <AppLayout>
-      <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">
+      <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -8 }}
@@ -66,8 +92,8 @@ export default function Discover() {
             <Compass className="h-5 w-5 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="text-xl font-display font-bold text-foreground">Discover People</h2>
-            <p className="text-xs text-muted-foreground">Find and connect with your peers</p>
+            <h2 className="text-xl font-display font-bold text-foreground">Discover</h2>
+            <p className="text-xs text-muted-foreground">Find trending students, top faculty & active discussions</p>
           </div>
         </motion.div>
 
@@ -87,23 +113,44 @@ export default function Discover() {
           />
         </motion.div>
 
+        {/* Tabs */}
+        <div className="flex gap-2">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-xl transition-all duration-200 ${
+                  active
+                    ? "gradient-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-hover bg-surface/30"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <div className="relative">
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            </div>
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Finding people...</p>
           </div>
-        ) : filtered.length === 0 ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 glass-card rounded-2xl">
+        ) : sorted.length === 0 ? (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 glass-card rounded-2xl hover:translate-y-0">
             <Users className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground">No users found</p>
           </motion.div>
         ) : (
           <div className="grid gap-3">
-            {filtered.map((p, i) => {
+            {sorted.map((p, i) => {
               const name = p.display_name || p.username || "Anonymous";
               const isFollowing = followingSet.has(p.user_id);
+              const rep = reputations[p.user_id];
               return (
                 <motion.div
                   key={p.id}
@@ -118,13 +165,20 @@ export default function Discover() {
                       <AvatarFallback className="bg-surface text-primary font-semibold">{name.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-semibold text-foreground group-hover:text-primary transition-colors text-sm truncate">{name}</p>
                         <RoleBadge role={p.role} />
+                        <ReputationBadge badge={rep?.badge} points={rep?.points} />
                       </div>
                       {p.bio && <p className="text-xs text-muted-foreground truncate mt-0.5">{p.bio}</p>}
                       {p.role === "student" && p.semester && (
                         <p className="text-[10px] text-muted-foreground mt-0.5">{p.semester}{p.batch ? ` · Batch ${p.batch}` : ""}</p>
+                      )}
+                      {rep && rep.points > 0 && (
+                        <div className="flex items-center gap-1 mt-1">
+                          <Award className="h-3 w-3 text-warning" />
+                          <span className="text-[10px] text-muted-foreground">{rep.points} reputation points</span>
+                        </div>
                       )}
                     </div>
                   </Link>

@@ -52,15 +52,21 @@ export function PostCard({
   const [submitting, setSubmitting] = useState(false);
   const [liked, setLiked] = useState(is_liked);
   const [likesNum, setLikesNum] = useState(likes_count);
+  const [likeAnimating, setLikeAnimating] = useState(false);
 
   const displayName = profiles?.display_name || profiles?.username || "Anonymous";
   const initials = displayName.slice(0, 2).toUpperCase();
 
   const handleLike = async () => {
     if (!user) return toast.error("Sign in to like posts");
-    setLiked(!liked);
-    setLikesNum(liked ? likesNum - 1 : likesNum + 1);
-    if (liked) {
+    const newLiked = !liked;
+    setLiked(newLiked);
+    setLikesNum(newLiked ? likesNum + 1 : likesNum - 1);
+    if (newLiked) {
+      setLikeAnimating(true);
+      setTimeout(() => setLikeAnimating(false), 600);
+    }
+    if (!newLiked) {
       await supabase.from("likes").delete().eq("post_id", id).eq("user_id", user.id);
     } else {
       await supabase.from("likes").insert({ post_id: id, user_id: user.id });
@@ -108,9 +114,7 @@ export function PostCard({
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      layout
       className="glass-card rounded-2xl overflow-hidden group"
     >
       <div className="p-5 space-y-3">
@@ -156,13 +160,37 @@ export function PostCard({
         <div className="flex items-center gap-1 pt-1.5">
           <button
             onClick={handleLike}
-            className={`flex items-center gap-1.5 text-sm rounded-full px-3.5 py-2 transition-all duration-200 ${
-              liked ? "text-primary bg-primary/10 font-medium" : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+            className={`relative flex items-center gap-1.5 text-sm rounded-full px-3.5 py-2 transition-all duration-200 ${
+              liked ? "text-rose-400 bg-rose-400/10 font-medium" : "text-muted-foreground hover:text-rose-400 hover:bg-rose-400/5"
             }`}
           >
-            <motion.div animate={liked ? { scale: [1, 1.4, 1] } : {}} transition={{ duration: 0.3 }}>
-              <Heart className={`h-[18px] w-[18px] ${liked ? "fill-current" : ""}`} />
+            <motion.div
+              animate={likeAnimating ? { scale: [1, 1.5, 0.9, 1.2, 1] } : {}}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <Heart className={`h-[18px] w-[18px] transition-all duration-200 ${liked ? "fill-current" : ""}`} />
             </motion.div>
+            {/* Burst particles */}
+            <AnimatePresence>
+              {likeAnimating && (
+                <>
+                  {[...Array(6)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ scale: 0, x: 0, y: 0, opacity: 1 }}
+                      animate={{
+                        scale: [0, 1, 0],
+                        x: Math.cos((i * 60 * Math.PI) / 180) * 20,
+                        y: Math.sin((i * 60 * Math.PI) / 180) * 20,
+                        opacity: [1, 1, 0],
+                      }}
+                      transition={{ duration: 0.5 }}
+                      className="absolute h-1.5 w-1.5 rounded-full bg-rose-400"
+                    />
+                  ))}
+                </>
+              )}
+            </AnimatePresence>
             <span>{likesNum}</span>
           </button>
           <button

@@ -260,12 +260,51 @@ export type Database = {
         }
         Relationships: []
       }
+      user_reputation: {
+        Row: {
+          badge: string | null
+          comments_count: number
+          created_at: string
+          id: string
+          likes_received: number
+          points: number
+          posts_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          badge?: string | null
+          comments_count?: number
+          created_at?: string
+          id?: string
+          likes_received?: number
+          points?: number
+          posts_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          badge?: string | null
+          comments_count?: number
+          created_at?: string
+          id?: string
+          likes_received?: number
+          points?: number
+          posts_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      recalculate_reputation: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
