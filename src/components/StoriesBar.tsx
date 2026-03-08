@@ -96,7 +96,7 @@ export function StoriesBar() {
               className="flex flex-col items-center gap-1.5 shrink-0 group"
             >
               <div className="relative">
-                <div className="w-14 h-14 rounded-full p-[2.5px] bg-gradient-to-tr from-accent via-primary to-warning">
+                <div className="w-14 h-14 rounded-full p-[2.5px] story-ring">
                   <Avatar className="w-full h-full border-2 border-background">
                     <AvatarImage src={group.avatar_url || ""} />
                     <AvatarFallback className="bg-surface text-xs">
