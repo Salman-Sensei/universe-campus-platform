@@ -21,6 +21,7 @@ import AIAssistant from "./pages/AIAssistant";
 import Notifications from "./pages/Notifications";
 import ConfessionWall from "./pages/ConfessionWall";
 import Marketplace from "./pages/Marketplace";
+import StudyPartner from "./pages/StudyPartner";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
