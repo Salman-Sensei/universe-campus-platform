@@ -417,6 +417,74 @@ export type Database = {
         }
         Relationships: []
       }
+      study_request_participants: {
+        Row: {
+          created_at: string
+          id: string
+          request_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          request_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          request_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_request_participants_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "study_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_requests: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          max_partners: number
+          semester: string | null
+          status: string
+          subject: string
+          time_available: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          max_partners?: number
+          semester?: string | null
+          status?: string
+          subject: string
+          time_available: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          max_partners?: number
+          semester?: string | null
+          status?: string
+          subject?: string
+          time_available?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_reputation: {
         Row: {
           badge: string | null
