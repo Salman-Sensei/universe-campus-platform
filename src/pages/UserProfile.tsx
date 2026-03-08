@@ -8,6 +8,7 @@ import { usePosts } from "@/hooks/usePosts";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserPlus, UserMinus, Music, Quote, Tag, Loader2 } from "lucide-react";
+import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
