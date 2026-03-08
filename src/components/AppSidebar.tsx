@@ -20,6 +20,7 @@ const navItems = [
   { title: "Discover", url: "/discover", icon: Search },
   { title: "Create Post", url: "/create", icon: PlusSquare },
   { title: "Notifications", url: "/notifications", icon: Bell },
+  { title: "Confessions", url: "/confessions", icon: Ghost },
   { title: "AI Assistant", url: "/ai", icon: Sparkles },
   { title: "My Profile", url: "/profile", icon: User },
 ];
