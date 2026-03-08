@@ -91,6 +91,7 @@ export function PostCard({
       user_id: user.id,
       content: newComment.trim(),
     });
+    createNotification(user_id, "comment", id);
     setNewComment("");
     setSubmitting(false);
     await loadComments();
