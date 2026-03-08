@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
 import Discover from "./pages/Discover";
 import AIAssistant from "./pages/AIAssistant";
+import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ function AppRoutes() {
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/discover" element={<ProtectedRoute><Discover /></ProtectedRoute>} />
       <Route path="/ai" element={<ProtectedRoute><AIAssistant /></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
       <Route path="/user/:username" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>

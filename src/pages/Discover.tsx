@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotifications } from "@/hooks/useNotifications";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import type { Tables } from "@/integrations/supabase/types";
 
 export default function Discover() {
   const { user } = useAuth();
+  const { createNotification } = useNotifications();
   const [profiles, setProfiles] = useState<Tables<"profiles">[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -40,6 +42,7 @@ export default function Discover() {
     } else {
       await supabase.from("follows").insert({ follower_id: user.id, following_id: targetId });
       setFollowingSet((prev) => new Set(prev).add(targetId));
+      createNotification(targetId, "follow");
     }
   };
 

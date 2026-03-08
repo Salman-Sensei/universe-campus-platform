@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotifications } from "@/hooks/useNotifications";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -42,6 +43,7 @@ export function PostCard({
   likes_count, comments_count, is_liked, onRefresh,
 }: PostCardProps) {
   const { user } = useAuth();
+  const { createNotification } = useNotifications();
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -61,6 +63,7 @@ export function PostCard({
       await supabase.from("likes").delete().eq("post_id", id).eq("user_id", user.id);
     } else {
       await supabase.from("likes").insert({ post_id: id, user_id: user.id });
+      createNotification(user_id, "like", id);
     }
     onRefresh();
   };
@@ -88,6 +91,7 @@ export function PostCard({
       user_id: user.id,
       content: newComment.trim(),
     });
+    createNotification(user_id, "comment", id);
     setNewComment("");
     setSubmitting(false);
     await loadComments();

@@ -1,7 +1,8 @@
-import { Home, User, PlusSquare, Search, LogOut, Sparkles } from "lucide-react";
+import { Home, User, PlusSquare, Search, LogOut, Sparkles, Bell } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotifications } from "@/hooks/useNotifications";
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +19,7 @@ const navItems = [
   { title: "Feed", url: "/feed", icon: Home },
   { title: "Discover", url: "/discover", icon: Search },
   { title: "Create Post", url: "/create", icon: PlusSquare },
+  { title: "Notifications", url: "/notifications", icon: Bell },
   { title: "AI Assistant", url: "/ai", icon: Sparkles },
   { title: "My Profile", url: "/profile", icon: User },
 ];
@@ -27,6 +29,7 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { unreadCount } = useNotifications();
 
   const handleSignOut = async () => {
     await signOut();
@@ -57,7 +60,14 @@ export function AppSidebar() {
                       className="rounded-xl hover:bg-surface-hover transition-all duration-200 py-2.5"
                       activeClassName="bg-primary/10 text-primary font-semibold glow-border"
                     >
-                      <item.icon className="mr-3 h-[18px] w-[18px]" />
+                      <div className="relative">
+                        <item.icon className="mr-3 h-[18px] w-[18px]" />
+                        {item.title === "Notifications" && unreadCount > 0 && (
+                          <span className="absolute -top-1.5 -right-0.5 h-4 min-w-4 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
+                            {unreadCount > 9 ? "9+" : unreadCount}
+                          </span>
+                        )}
+                      </div>
                       {!collapsed && <span className="text-sm">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
