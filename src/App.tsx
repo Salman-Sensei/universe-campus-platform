@@ -17,7 +17,7 @@ import CreatePost from "./pages/CreatePost";
 import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
 import Discover from "./pages/Discover";
-import AIAssistant from "./pages/AIAssistant";
+import HowToUse from "./pages/HowToUse";
 import Notifications from "./pages/Notifications";
 import ConfessionWall from "./pages/ConfessionWall";
 import Marketplace from "./pages/Marketplace";
