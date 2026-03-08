@@ -204,13 +204,18 @@ export type Database = {
         Row: {
           avatar_url: string | null
           banner_url: string | null
+          batch: string | null
           bio: string | null
           created_at: string
           display_name: string | null
           favorite_music: string | null
           id: string
           interests: string[] | null
+          onboarding_completed: boolean
           quote: string | null
+          role: string | null
+          semester: string | null
+          subjects: string[] | null
           updated_at: string
           user_id: string
           username: string | null
@@ -218,13 +223,18 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           banner_url?: string | null
+          batch?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
           favorite_music?: string | null
           id?: string
           interests?: string[] | null
+          onboarding_completed?: boolean
           quote?: string | null
+          role?: string | null
+          semester?: string | null
+          subjects?: string[] | null
           updated_at?: string
           user_id: string
           username?: string | null
@@ -232,13 +242,18 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           banner_url?: string | null
+          batch?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
           favorite_music?: string | null
           id?: string
           interests?: string[] | null
+          onboarding_completed?: boolean
           quote?: string | null
+          role?: string | null
+          semester?: string | null
+          subjects?: string[] | null
           updated_at?: string
           user_id?: string
           username?: string | null
