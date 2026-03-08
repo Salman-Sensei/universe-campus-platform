@@ -20,6 +20,7 @@ import Discover from "./pages/Discover";
 import AIAssistant from "./pages/AIAssistant";
 import Notifications from "./pages/Notifications";
 import ConfessionWall from "./pages/ConfessionWall";
+import Marketplace from "./pages/Marketplace";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
