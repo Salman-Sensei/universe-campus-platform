@@ -28,13 +28,9 @@ export function TrendingPosts() {
         .order("created_at", { ascending: false })
         .limit(20);
 
-      if (!postsData || postsData.length === 0) {
-        setLoading(false);
-        return;
-      }
+      if (!postsData || postsData.length === 0) { setLoading(false); return; }
 
       const postIds = postsData.map((p) => p.id);
-
       const [likesRes, commentsRes] = await Promise.all([
         supabase.from("likes").select("post_id").in("post_id", postIds),
         supabase.from("comments").select("post_id").in("post_id", postIds),
@@ -48,20 +44,13 @@ export function TrendingPosts() {
       const enriched: TrendingPost[] = postsData.map((p) => {
         const profile = p.profiles as unknown as { username: string | null; display_name: string | null };
         return {
-          id: p.id,
-          content: p.content,
-          created_at: p.created_at,
-          user_id: p.user_id,
-          username: profile?.username,
-          display_name: profile?.display_name,
-          likes_count: likesMap[p.id] || 0,
-          comments_count: commentsMap[p.id] || 0,
+          id: p.id, content: p.content, created_at: p.created_at, user_id: p.user_id,
+          username: profile?.username, display_name: profile?.display_name,
+          likes_count: likesMap[p.id] || 0, comments_count: commentsMap[p.id] || 0,
         };
       });
 
-      // Sort by engagement (likes + comments)
       enriched.sort((a, b) => (b.likes_count + b.comments_count) - (a.likes_count + a.comments_count));
-
       setPosts(enriched.slice(0, 5));
       setLoading(false);
     };
@@ -70,8 +59,8 @@ export function TrendingPosts() {
 
   if (loading) {
     return (
-      <div className="glass rounded-2xl p-5 space-y-3">
-        <div className="flex items-center gap-2 mb-1">
+      <div className="glass-card rounded-2xl p-5 space-y-4">
+        <div className="flex items-center gap-2">
           <TrendingUp className="h-4 w-4 text-primary" />
           <h3 className="font-display font-bold text-sm text-foreground">Trending</h3>
         </div>
@@ -92,13 +81,15 @@ export function TrendingPosts() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.1 }}
-      className="glass rounded-2xl p-5"
+      className="glass-card rounded-2xl p-5 hover:translate-y-0"
     >
       <div className="flex items-center gap-2 mb-4">
-        <TrendingUp className="h-4 w-4 text-primary" />
+        <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+          <TrendingUp className="h-3.5 w-3.5 text-primary" />
+        </div>
         <h3 className="font-display font-bold text-sm text-foreground">Trending Posts</h3>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-1">
         {posts.map((post, i) => (
           <motion.div
             key={post.id}
@@ -113,9 +104,7 @@ export function TrendingPosts() {
               <p className="text-xs text-muted-foreground mb-1 group-hover:text-primary/70 transition-colors">
                 {post.display_name || post.username || "Anonymous"} · {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               </p>
-              <p className="text-sm text-foreground/80 line-clamp-2 leading-relaxed">
-                {post.content}
-              </p>
+              <p className="text-sm text-foreground/80 line-clamp-2 leading-relaxed">{post.content}</p>
               <div className="flex items-center gap-3 mt-2">
                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Heart className="h-3 w-3" /> {post.likes_count}
