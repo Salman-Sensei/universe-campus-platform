@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { RoleBadge } from "@/components/RoleBadge";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap, Check, ChevronRight, ChevronLeft, User, Camera, Users, BookOpen, Loader2, UserPlus, UserCheck } from "lucide-react";
@@ -24,6 +25,61 @@ const AVATAR_OPTIONS = [
   "https://api.dicebear.com/7.x/bottts/svg?seed=bot2",
 ];
 
+interface DemoUser {
+  id: string;
+  user_id: string;
+  username: string;
+  display_name: string;
+  avatar_url: string;
+  role: "student" | "faculty";
+  semester?: string;
+  batch?: string;
+  subjects?: string[];
+  bio: string;
+  isDemo: true;
+}
+
+const DEMO_USERS: DemoUser[] = [
+  {
+    id: "demo-1", user_id: "demo-zaigham", username: "zaighamkhan", display_name: "Zaigham Khan",
+    avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=zaigham",
+    role: "student", semester: "4th Semester", batch: "2024",
+    bio: "CS student passionate about web development and open source.", isDemo: true,
+  },
+  {
+    id: "demo-2", user_id: "demo-maria", username: "maria", display_name: "Maria",
+    avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=maria",
+    role: "student", semester: "6th Semester", batch: "2023",
+    bio: "Software engineering student. Loves UI/UX design and mobile apps.", isDemo: true,
+  },
+  {
+    id: "demo-3", user_id: "demo-bisman", username: "rajabisman", display_name: "Raja Bisman",
+    avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=bisman",
+    role: "student", semester: "4th Semester", batch: "2024",
+    bio: "Data science enthusiast. Always exploring new technologies.", isDemo: true,
+  },
+  {
+    id: "demo-4", user_id: "demo-faisal", username: "drfaisal", display_name: "Dr. Faisal",
+    avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=faisal",
+    role: "faculty", subjects: ["Computer Programming"],
+    bio: "Associate Professor. Teaching programming fundamentals for 10+ years.", isDemo: true,
+  },
+  {
+    id: "demo-5", user_id: "demo-raazi", username: "profraazi", display_name: "Prof. Raazi",
+    avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=raazi",
+    role: "faculty", subjects: ["Computer Communication And Networking"],
+    bio: "Networking expert. Research interests in IoT and network security.", isDemo: true,
+  },
+  {
+    id: "demo-6", user_id: "demo-faiz", username: "drfaiz", display_name: "Dr. Faiz",
+    avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=faiz",
+    role: "faculty", subjects: ["Artificial Intelligence"],
+    bio: "AI researcher focused on NLP and machine learning applications in education.", isDemo: true,
+  },
+];
+
+type SuggestedUser = (Tables<"profiles"> & { isDemo?: false }) | DemoUser;
+
 export default function Onboarding() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -41,7 +97,7 @@ export default function Onboarding() {
   const [saving, setSaving] = useState(false);
 
   // Follow step
-  const [suggestedUsers, setSuggestedUsers] = useState<Tables<"profiles">[]>([]);
+  const [suggestedUsers, setSuggestedUsers] = useState<SuggestedUser[]>([]);
   const [followedUsers, setFollowedUsers] = useState<Set<string>>(new Set());
   const [loadingUsers, setLoadingUsers] = useState(false);
 
@@ -68,7 +124,12 @@ export default function Onboarding() {
       setLoadingUsers(true);
       supabase.from("profiles").select("*").neq("user_id", user?.id || "").limit(20)
         .then(({ data }) => {
-          if (data) setSuggestedUsers(data);
+          const realUsers: SuggestedUser[] = (data || []).map(p => ({ ...p, isDemo: false as const }));
+          // Always include demo users, filter out any with matching usernames from real users
+          const realUsernames = new Set(realUsers.map(u => u.username));
+          const demosToAdd = DEMO_USERS.filter(d => !realUsernames.has(d.username));
+          // Show demos first, then real users
+          setSuggestedUsers([...demosToAdd, ...realUsers]);
           setLoadingUsers(false);
         });
     }
@@ -83,15 +144,21 @@ export default function Onboarding() {
     }
   };
 
-  const toggleFollow = async (targetId: string) => {
+  const toggleFollow = async (targetId: string, isDemo?: boolean) => {
     if (!user) return;
     const newSet = new Set(followedUsers);
     if (newSet.has(targetId)) {
       newSet.delete(targetId);
-      await supabase.from("follows").delete().eq("follower_id", user.id).eq("following_id", targetId);
+      // Only delete from DB if it's a real user
+      if (!isDemo) {
+        await supabase.from("follows").delete().eq("follower_id", user.id).eq("following_id", targetId);
+      }
     } else {
       newSet.add(targetId);
-      await supabase.from("follows").insert({ follower_id: user.id, following_id: targetId });
+      // Only insert to DB if it's a real user
+      if (!isDemo) {
+        await supabase.from("follows").insert({ follower_id: user.id, following_id: targetId });
+      }
     }
     setFollowedUsers(newSet);
   };
@@ -144,8 +211,7 @@ export default function Onboarding() {
       if (role === "faculty") return !!subjects.trim();
       return true;
     }
-    if (step === 3) return followedUsers.size >= 3;
-    return true;
+    return true; // Step 3 always allows proceeding (skip or follow)
   };
 
   const currentAvatar = customAvatarPreview || selectedAvatar;
@@ -296,45 +362,64 @@ export default function Onboarding() {
             <motion.div key="follow" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
               <div className="text-center mb-4">
                 <Users className="h-10 w-10 text-primary mx-auto mb-2" />
-                <h2 className="font-display font-semibold text-lg text-foreground">Follow at least 3 people</h2>
+                <h2 className="font-display font-semibold text-lg text-foreground">Suggested for you</h2>
                 <p className="text-sm text-muted-foreground">
-                  {followedUsers.size}/3 followed {followedUsers.size >= 3 && <Check className="inline h-4 w-4 text-success" />}
+                  Follow people to personalize your feed
+                  {followedUsers.size > 0 && <span className="text-primary font-medium"> · {followedUsers.size} selected</span>}
                 </p>
               </div>
               {loadingUsers ? (
                 <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
-              ) : suggestedUsers.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground text-sm">No users to follow yet. You can skip this step.</p>
-                </div>
               ) : (
                 <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                   {suggestedUsers.map((p) => {
                     const name = p.display_name || p.username || "User";
                     const isFollowed = followedUsers.has(p.user_id);
+                    const isDemo = "isDemo" in p && p.isDemo;
+                    const userRole = (p as any).role as string | null;
+                    const userSemester = (p as any).semester as string | undefined;
+                    const userBatch = (p as any).batch as string | undefined;
+                    const userSubjects = (p as any).subjects as string[] | undefined;
+
                     return (
-                      <div key={p.id} className="flex items-center gap-3 bg-surface/60 rounded-xl p-3">
-                        <Avatar className="h-10 w-10 ring-2 ring-border/40">
+                      <motion.div
+                        key={p.id || p.user_id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`flex items-center gap-3 rounded-xl p-3 transition-all duration-200 ${
+                          isFollowed ? "bg-primary/5 ring-1 ring-primary/20" : "bg-surface/60 hover:bg-surface-hover"
+                        }`}
+                      >
+                        <Avatar className="h-11 w-11 ring-2 ring-border/40 shrink-0">
                           <AvatarImage src={p.avatar_url || undefined} />
                           <AvatarFallback className="bg-surface text-primary font-semibold text-xs">{name.slice(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-foreground truncate">{name}</p>
-                          {(p as any).role && (
-                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${(p as any).role === "faculty" ? "role-badge-faculty" : "role-badge-student"}`}>
-                              {(p as any).role === "faculty" ? "Faculty" : "Student"}
-                            </span>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-foreground truncate">{name}</p>
+                            <RoleBadge role={userRole} />
+                          </div>
+                          {userRole === "student" && userSemester && (
+                            <p className="text-[10px] text-muted-foreground">
+                              {userSemester}{userBatch ? ` · Batch ${userBatch}` : ""}
+                            </p>
                           )}
+                          {userRole === "faculty" && userSubjects && userSubjects.length > 0 && (
+                            <p className="text-[10px] text-muted-foreground truncate">
+                              {userSubjects.join(", ")}
+                            </p>
+                          )}
+                          {p.bio && <p className="text-[10px] text-muted-foreground truncate mt-0.5">{p.bio}</p>}
                         </div>
                         <Button
-                          onClick={() => toggleFollow(p.user_id)}
+                          onClick={() => toggleFollow(p.user_id, isDemo)}
                           variant={isFollowed ? "secondary" : "default"}
                           size="sm"
                           className={`rounded-xl shrink-0 ${isFollowed ? "bg-surface-hover" : "gradient-primary text-primary-foreground font-semibold"}`}
                         >
-                          {isFollowed ? <UserCheck className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
+                          {isFollowed ? <><UserCheck className="h-4 w-4 mr-1" /> Following</> : <><UserPlus className="h-4 w-4 mr-1" /> Follow</>}
                         </Button>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>
@@ -350,16 +435,30 @@ export default function Onboarding() {
               <ChevronLeft className="h-4 w-4 mr-1" /> Back
             </Button>
           ) : <div />}
-          {step < STEPS.length - 1 ? (
-            <Button onClick={() => setStep(step + 1)} disabled={!canProceed()} className="gradient-primary text-primary-foreground font-semibold rounded-xl">
-              Next <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-          ) : (
-            <Button onClick={handleFinish} disabled={saving || !canProceed()} className="gradient-primary text-primary-foreground font-semibold rounded-xl">
-              {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-1" />}
-              {saving ? "Saving..." : "Finish Setup"}
-            </Button>
-          )}
+
+          <div className="flex items-center gap-2">
+            {step === STEPS.length - 1 && (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={handleFinish}
+                  disabled={saving}
+                  className="rounded-xl text-muted-foreground hover:text-foreground"
+                >
+                  Skip for now
+                </Button>
+                <Button onClick={handleFinish} disabled={saving} className="gradient-primary text-primary-foreground font-semibold rounded-xl">
+                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-1" />}
+                  {saving ? "Saving..." : "Finish Setup"}
+                </Button>
+              </>
+            )}
+            {step < STEPS.length - 1 && (
+              <Button onClick={() => setStep(step + 1)} disabled={!canProceed()} className="gradient-primary text-primary-foreground font-semibold rounded-xl">
+                Next <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            )}
+          </div>
         </div>
       </motion.div>
     </div>
