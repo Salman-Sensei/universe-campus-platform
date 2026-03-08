@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
 import { usePosts } from "@/hooks/usePosts";
 import { RoleBadge } from "@/components/RoleBadge";
+import { FounderBadge } from "@/components/FounderBadge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserPlus, UserMinus, Music, Quote, Tag, Loader2, GraduationCap, BookOpen } from "lucide-react";
