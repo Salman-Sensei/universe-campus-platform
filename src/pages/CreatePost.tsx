@@ -73,7 +73,7 @@ export default function CreatePost() {
               <Textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="What's on your mind? Share something with the community..."
+                placeholder="Share an academic update, idea, or question..."
                 className="bg-surface/40 border-border/30 min-h-[160px] text-foreground resize-none rounded-xl text-[15px] leading-relaxed focus:ring-1 focus:ring-primary/30"
                 required
               />

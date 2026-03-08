@@ -5,9 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { NotificationsProvider } from "@/contexts/NotificationsContext";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Onboarding from "./pages/Onboarding";
 import Feed from "./pages/Feed";
 import CreatePost from "./pages/CreatePost";
 import Profile from "./pages/Profile";
@@ -18,6 +21,26 @@ import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+function OnboardingGuard({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
+  const [onboardingDone, setOnboardingDone] = useState(false);
+
+  useEffect(() => {
+    if (!user) { setCheckingOnboarding(false); return; }
+    supabase.from("profiles").select("onboarding_completed").eq("user_id", user.id).single()
+      .then(({ data }) => {
+        setOnboardingDone(!!data?.onboarding_completed);
+        setCheckingOnboarding(false);
+      });
+  }, [user]);
+
+  if (loading || checkingOnboarding) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!onboardingDone) return <Navigate to="/onboarding" replace />;
+  return <>{children}</>;
+}
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -36,13 +59,14 @@ function AppRoutes() {
       <Route path="/" element={user ? <Navigate to="/feed" replace /> : <Landing />} />
       <Route path="/login" element={user ? <Navigate to="/feed" replace /> : <Login />} />
       <Route path="/register" element={user ? <Navigate to="/feed" replace /> : <Register />} />
-      <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
-      <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
-      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-      <Route path="/discover" element={<ProtectedRoute><Discover /></ProtectedRoute>} />
-      <Route path="/ai" element={<ProtectedRoute><AIAssistant /></ProtectedRoute>} />
-      <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-      <Route path="/user/:username" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+      <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+      <Route path="/feed" element={<OnboardingGuard><Feed /></OnboardingGuard>} />
+      <Route path="/create" element={<OnboardingGuard><CreatePost /></OnboardingGuard>} />
+      <Route path="/profile" element={<OnboardingGuard><Profile /></OnboardingGuard>} />
+      <Route path="/discover" element={<OnboardingGuard><Discover /></OnboardingGuard>} />
+      <Route path="/ai" element={<OnboardingGuard><AIAssistant /></OnboardingGuard>} />
+      <Route path="/notifications" element={<OnboardingGuard><Notifications /></OnboardingGuard>} />
+      <Route path="/user/:username" element={<OnboardingGuard><UserProfile /></OnboardingGuard>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

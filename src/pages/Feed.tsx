@@ -25,7 +25,7 @@ export default function Feed() {
             <div className="flex-1">
               <Link to="/create">
                 <div className="bg-surface/60 rounded-xl px-4 py-2.5 text-sm text-muted-foreground hover:bg-surface-hover transition-colors cursor-pointer">
-                  What's on your mind?
+                  Share an update with your community...
                 </div>
               </Link>
             </div>

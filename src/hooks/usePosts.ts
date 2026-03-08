@@ -12,6 +12,7 @@ interface PostWithMeta {
     username: string | null;
     display_name: string | null;
     avatar_url: string | null;
+    role: string | null;
   };
   likes_count: number;
   comments_count: number;
@@ -27,7 +28,7 @@ export function usePosts(userId?: string) {
     setLoading(true);
     let query = supabase
       .from("posts")
-      .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url)")
+      .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url, role)")
       .order("created_at", { ascending: false });
 
     if (userId) {

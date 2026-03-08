@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Outfit", "sans-serif"],
-        body: ["Satoshi", "sans-serif"],
+        display: ["Plus Jakarta Sans", "sans-serif"],
+        body: ["Inter", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -56,6 +56,8 @@ export default {
         "surface-active": "hsl(var(--surface-active))",
         glow: "hsl(var(--glow))",
         "glow-secondary": "hsl(var(--glow-secondary))",
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

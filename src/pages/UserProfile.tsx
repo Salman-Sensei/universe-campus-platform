@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/PostCard";
 import { usePosts } from "@/hooks/usePosts";
+import { RoleBadge } from "@/components/RoleBadge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserPlus, UserMinus, Music, Quote, Tag, Loader2 } from "lucide-react";
@@ -72,14 +73,15 @@ export default function UserProfile() {
 
   const displayName = profile.display_name || profile.username || "Anonymous";
   const isOwnProfile = user?.id === profile.user_id;
+  const profileAny = profile as any;
 
   return (
     <AppLayout>
-      <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">
+      <div className="max-w-2xl mx-auto pb-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-2xl overflow-hidden noise"
+          className="glass rounded-b-2xl overflow-hidden noise"
         >
           {/* Cover Banner */}
           <div className="relative h-[250px] overflow-hidden">
@@ -108,8 +110,27 @@ export default function UserProfile() {
               )}
             </div>
 
-            <h2 className="text-2xl font-display font-bold text-foreground">{displayName}</h2>
-            <p className="text-sm text-muted-foreground mb-2">@{profile.username || "user"}</p>
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-2xl font-display font-bold text-foreground">{displayName}</h2>
+              <RoleBadge role={profileAny.role} size="md" />
+            </div>
+            <p className="text-sm text-muted-foreground mb-1">@{profile.username || "user"}</p>
+
+            {profileAny.role === "student" && (profileAny.semester || profileAny.batch) && (
+              <p className="text-xs text-muted-foreground mb-2">
+                {profileAny.semester && <span>{profileAny.semester}</span>}
+                {profileAny.semester && profileAny.batch && <span> · </span>}
+                {profileAny.batch && <span>Batch {profileAny.batch}</span>}
+              </p>
+            )}
+            {profileAny.role === "faculty" && profileAny.subjects?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {(profileAny.subjects as string[]).map((s: string) => (
+                  <span key={s} className="text-[10px] bg-accent/15 text-accent px-2 py-0.5 rounded-full font-medium">{s}</span>
+                ))}
+              </div>
+            )}
+
             <div className="flex gap-5 text-sm text-muted-foreground mb-4">
               <span><strong className="text-foreground font-semibold">{followersCount}</strong> followers</span>
               <span><strong className="text-foreground font-semibold">{followingCount}</strong> following</span>
@@ -141,21 +162,23 @@ export default function UserProfile() {
           </div>
         </motion.div>
 
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-display font-semibold text-foreground">Posts</h3>
-          <span className="text-xs text-muted-foreground">{posts.length} posts</span>
+        <div className="px-4 md:px-6 mt-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-display font-semibold text-foreground">Posts</h3>
+            <span className="text-xs text-muted-foreground">{posts.length} posts</span>
+          </div>
+          {postsLoading ? (
+            <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+          ) : posts.length === 0 ? (
+            <div className="text-center py-16 glass rounded-2xl">
+              <p className="text-muted-foreground text-sm">No posts yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {posts.map((post) => <PostCard key={post.id} {...post} onRefresh={refresh} />)}
+            </div>
+          )}
         </div>
-        {postsLoading ? (
-          <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
-        ) : posts.length === 0 ? (
-          <div className="text-center py-16 glass rounded-2xl">
-            <p className="text-muted-foreground text-sm">No posts yet.</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {posts.map((post) => <PostCard key={post.id} {...post} onRefresh={refresh} />)}
-          </div>
-        )}
       </div>
     </AppLayout>
   );
