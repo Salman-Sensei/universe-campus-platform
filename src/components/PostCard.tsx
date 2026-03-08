@@ -134,6 +134,7 @@ export function PostCard({
               <div className="flex items-center gap-2">
                 <p className="font-semibold text-foreground group-hover/link:text-primary transition-colors text-sm">{displayName}</p>
                 <RoleBadge role={profiles?.role} />
+                {profiles?.founder_badge && <FounderBadge />}
               </div>
               <p className="text-xs text-muted-foreground">
                 @{profiles?.username || "user"} · {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
