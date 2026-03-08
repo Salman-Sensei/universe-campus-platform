@@ -35,6 +35,12 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { unreadCount } = useNotificationsContext();
+  const { isAdmin } = useAdmin();
+
+  const allNavItems = [
+    ...navItems,
+    ...(isAdmin ? [{ title: "Admin", url: "/admin", icon: Shield }] : []),
+  ];
 
   const handleSignOut = async () => {
     await signOut();
