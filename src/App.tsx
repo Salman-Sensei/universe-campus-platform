@@ -17,7 +17,7 @@ import CreatePost from "./pages/CreatePost";
 import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
 import Discover from "./pages/Discover";
-import AIAssistant from "./pages/AIAssistant";
+import HowToUse from "./pages/HowToUse";
 import Notifications from "./pages/Notifications";
 import ConfessionWall from "./pages/ConfessionWall";
 import Marketplace from "./pages/Marketplace";
@@ -70,7 +70,7 @@ function AppRoutes() {
       <Route path="/create" element={<OnboardingGuard><CreatePost /></OnboardingGuard>} />
       <Route path="/profile" element={<OnboardingGuard><Profile /></OnboardingGuard>} />
       <Route path="/discover" element={<OnboardingGuard><Discover /></OnboardingGuard>} />
-      <Route path="/ai" element={<OnboardingGuard><AIAssistant /></OnboardingGuard>} />
+      <Route path="/how-to-use" element={<OnboardingGuard><HowToUse /></OnboardingGuard>} />
       <Route path="/notifications" element={<OnboardingGuard><Notifications /></OnboardingGuard>} />
       <Route path="/confessions" element={<OnboardingGuard><ConfessionWall /></OnboardingGuard>} />
       <Route path="/marketplace" element={<OnboardingGuard><Marketplace /></OnboardingGuard>} />

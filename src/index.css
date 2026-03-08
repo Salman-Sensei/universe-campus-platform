@@ -414,9 +414,38 @@
   .btn-glow:hover::after {
     opacity: 1;
   }
-}
+  /* Story ring animation */
+  .story-ring {
+    background: conic-gradient(
+      hsl(var(--accent)),
+      hsl(var(--primary)),
+      hsl(var(--warning)),
+      hsl(var(--accent))
+    );
+    animation: story-ring-spin 3s linear infinite;
+  }
 
-@keyframes shimmer {
+  @keyframes story-ring-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Loading skeleton pulse */
+  .skeleton-pulse {
+    background: linear-gradient(
+      110deg,
+      hsl(var(--muted)) 8%,
+      hsl(var(--surface-hover)) 18%,
+      hsl(var(--muted)) 33%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes skeleton-pulse {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+}
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
