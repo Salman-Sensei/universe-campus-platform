@@ -13,6 +13,7 @@ interface PostWithMeta {
     display_name: string | null;
     avatar_url: string | null;
     role: string | null;
+    founder_badge: boolean | null;
   };
   likes_count: number;
   comments_count: number;
