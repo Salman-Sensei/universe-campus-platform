@@ -8,6 +8,7 @@ import { Loader2, PenSquare, Sparkles, Flame, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { StoriesBar } from "@/components/StoriesBar";
 
 export default function Feed() {
   const { posts, loading, refresh } = usePosts();
