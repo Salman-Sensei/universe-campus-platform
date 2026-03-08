@@ -74,6 +74,7 @@ function AppRoutes() {
       <Route path="/confessions" element={<OnboardingGuard><ConfessionWall /></OnboardingGuard>} />
       <Route path="/marketplace" element={<OnboardingGuard><Marketplace /></OnboardingGuard>} />
       <Route path="/study-partner" element={<OnboardingGuard><StudyPartner /></OnboardingGuard>} />
+      <Route path="/notes" element={<OnboardingGuard><NotesResources /></OnboardingGuard>} />
       <Route path="/user/:username" element={<OnboardingGuard><UserProfile /></OnboardingGuard>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
