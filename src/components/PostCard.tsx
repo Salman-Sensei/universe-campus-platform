@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Trash2, Share2 } from "lucide-react";
+import { Heart, MessageCircle, Trash2, Share2, Bookmark } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -111,16 +111,19 @@ export function PostCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="glass rounded-2xl overflow-hidden group hover:border-border transition-all duration-300"
+      className="glass-card rounded-2xl overflow-hidden group"
     >
       <div className="p-5 space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
           <Link to={`/user/${profiles?.username || user_id}`} className="flex items-center gap-3 group/link">
-            <Avatar className="h-10 w-10 ring-2 ring-border/50 group-hover/link:ring-primary/40 transition-all duration-300">
-              <AvatarImage src={profiles?.avatar_url || undefined} />
-              <AvatarFallback className="bg-surface text-primary font-semibold text-sm">{initials}</AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar className="h-11 w-11 ring-2 ring-border/30 group-hover/link:ring-primary/40 transition-all duration-300">
+                <AvatarImage src={profiles?.avatar_url || undefined} />
+                <AvatarFallback className="bg-surface text-primary font-semibold text-sm">{initials}</AvatarFallback>
+              </Avatar>
+              <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-success border-2 border-card" />
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <p className="font-semibold text-foreground group-hover/link:text-primary transition-colors text-sm">{displayName}</p>
@@ -132,7 +135,7 @@ export function PostCard({
             </div>
           </Link>
           {user?.id === user_id && (
-            <Button variant="ghost" size="icon" onClick={handleDelete} className="text-muted-foreground hover:text-destructive h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button variant="ghost" size="icon" onClick={handleDelete} className="text-muted-foreground hover:text-destructive h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-all">
               <Trash2 className="h-4 w-4" />
             </Button>
           )}
@@ -144,35 +147,38 @@ export function PostCard({
         {/* Image */}
         {image_url && (
           <div className="relative -mx-5 overflow-hidden">
-            <img src={image_url} alt="Post" className="w-full max-h-[28rem] object-cover transition-transform duration-500 group-hover:scale-[1.01]" />
+            <img src={image_url} alt="Post" className="w-full max-h-[28rem] object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-card/30 to-transparent pointer-events-none" />
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-1 pt-1">
+        <div className="flex items-center gap-1 pt-1.5">
           <button
             onClick={handleLike}
-            className={`flex items-center gap-1.5 text-sm rounded-full px-3 py-1.5 transition-all duration-200 ${
-              liked ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+            className={`flex items-center gap-1.5 text-sm rounded-full px-3.5 py-2 transition-all duration-200 ${
+              liked ? "text-primary bg-primary/10 font-medium" : "text-muted-foreground hover:text-primary hover:bg-primary/5"
             }`}
           >
-            <motion.div animate={liked ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
-              <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
+            <motion.div animate={liked ? { scale: [1, 1.4, 1] } : {}} transition={{ duration: 0.3 }}>
+              <Heart className={`h-[18px] w-[18px] ${liked ? "fill-current" : ""}`} />
             </motion.div>
-            <span className="font-medium">{likesNum}</span>
+            <span>{likesNum}</span>
           </button>
           <button
             onClick={toggleComments}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full px-3 py-1.5 transition-all duration-200"
+            className={`flex items-center gap-1.5 text-sm rounded-full px-3.5 py-2 transition-all duration-200 ${
+              showComments ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+            }`}
           >
-            <MessageCircle className="h-4 w-4" />
-            <span className="font-medium">{comments_count}</span>
+            <MessageCircle className="h-[18px] w-[18px]" />
+            <span>{comments_count}</span>
           </button>
           <button
             onClick={() => { navigator.clipboard.writeText(window.location.origin + `/post/${id}`); toast.success("Link copied!"); }}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full px-3 py-1.5 transition-all duration-200 ml-auto"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full px-3.5 py-2 transition-all duration-200 ml-auto"
           >
-            <Share2 className="h-4 w-4" />
+            <Share2 className="h-[18px] w-[18px]" />
           </button>
         </div>
       </div>
@@ -185,9 +191,9 @@ export function PostCard({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="border-t border-border/40 overflow-hidden"
+            className="border-t border-border/30 overflow-hidden"
           >
-            <div className="p-5 space-y-3">
+            <div className="p-5 space-y-3 bg-surface/20">
               {comments.map((c, i) => (
                 <motion.div
                   key={c.id}
@@ -202,7 +208,7 @@ export function PostCard({
                       {(c.profiles?.display_name || "A").slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 bg-surface/80 rounded-xl px-3 py-2">
+                  <div className="flex-1 bg-surface/60 rounded-xl px-3.5 py-2.5">
                     <p className="text-xs font-semibold text-foreground">{c.profiles?.display_name || c.profiles?.username}</p>
                     <p className="text-sm text-foreground/80 leading-relaxed">{c.content}</p>
                   </div>
@@ -214,7 +220,7 @@ export function PostCard({
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Write a comment..."
-                    className="min-h-[38px] bg-surface/60 border-border/30 text-sm resize-none rounded-xl focus:ring-1 focus:ring-primary/30"
+                    className="min-h-[38px] bg-surface/40 border-border/30 text-sm resize-none rounded-xl focus:ring-1 focus:ring-primary/30"
                     rows={1}
                   />
                   <Button

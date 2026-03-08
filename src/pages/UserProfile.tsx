@@ -8,7 +8,7 @@ import { usePosts } from "@/hooks/usePosts";
 import { RoleBadge } from "@/components/RoleBadge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserPlus, UserMinus, Music, Quote, Tag, Loader2 } from "lucide-react";
+import { UserPlus, UserMinus, Music, Quote, Tag, Loader2, GraduationCap, BookOpen } from "lucide-react";
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -73,7 +73,6 @@ export default function UserProfile() {
 
   const displayName = profile.display_name || profile.username || "Anonymous";
   const isOwnProfile = user?.id === profile.user_id;
-  const profileAny = profile as any;
 
   return (
     <AppLayout>
@@ -81,71 +80,94 @@ export default function UserProfile() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-b-2xl overflow-hidden noise"
+          className="rounded-2xl overflow-hidden border border-border/40 bg-card"
         >
           {/* Cover Banner */}
-          <div className="relative h-[250px] overflow-hidden">
+          <div className="relative h-[200px] md:h-[260px] overflow-hidden">
             {profile.banner_url ? (
               <img src={profile.banner_url} alt="Profile banner" className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10" />
+              <div className="w-full h-full relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10" />
+                <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'radial-gradient(circle at 30% 40%, hsl(var(--primary) / 0.4) 0%, transparent 50%), radial-gradient(circle at 70% 60%, hsl(var(--glow-secondary) / 0.3) 0%, transparent 50%)' }} />
+              </div>
             )}
           </div>
 
-          <div className="px-6 pb-6 -mt-16 relative z-10">
-            <div className="flex items-end justify-between mb-3">
-              <Avatar className="h-28 w-28 ring-4 ring-card shadow-lg">
-                <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-surface text-primary text-3xl font-bold">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
+          <div className="px-5 md:px-8 pb-6 relative">
+            <div className="flex items-end justify-between -mt-16 relative z-10 mb-5">
+              <Avatar className="h-32 w-32 ring-4 ring-card shadow-xl">
+                <AvatarImage src={profile.avatar_url || undefined} className="object-cover" />
+                <AvatarFallback className="bg-muted text-primary text-3xl font-bold">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               {!isOwnProfile && user && (
                 <Button
                   onClick={toggleFollow}
-                  variant={isFollowing ? "secondary" : "default"}
+                  variant={isFollowing ? "outline" : "default"}
                   size="sm"
-                  className={`rounded-xl font-semibold mb-1 ${isFollowing ? "bg-surface-hover" : "gradient-primary text-primary-foreground"}`}
+                  className={`rounded-full font-semibold px-5 mt-16 ${!isFollowing ? "gradient-primary text-primary-foreground" : ""}`}
                 >
                   {isFollowing ? <><UserMinus className="mr-1.5 h-4 w-4" /> Unfollow</> : <><UserPlus className="mr-1.5 h-4 w-4" /> Follow</>}
                 </Button>
               )}
             </div>
 
-            <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-2xl font-display font-bold text-foreground">{displayName}</h2>
-              <RoleBadge role={profileAny.role} size="md" />
+            <div className="flex items-center gap-2.5 mb-1">
+              <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">{displayName}</h1>
+              <RoleBadge role={profile.role} size="md" />
             </div>
-            <p className="text-sm text-muted-foreground mb-1">@{profile.username || "user"}</p>
+            <p className="text-sm text-muted-foreground mb-4">@{profile.username || "user"}</p>
 
-            {profileAny.role === "student" && (profileAny.semester || profileAny.batch) && (
-              <p className="text-xs text-muted-foreground mb-2">
-                {profileAny.semester && <span>{profileAny.semester}</span>}
-                {profileAny.semester && profileAny.batch && <span> · </span>}
-                {profileAny.batch && <span>Batch {profileAny.batch}</span>}
-              </p>
-            )}
-            {profileAny.role === "faculty" && profileAny.subjects?.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mb-2">
-                {(profileAny.subjects as string[]).map((s: string) => (
-                  <span key={s} className="text-[10px] bg-accent/15 text-accent px-2 py-0.5 rounded-full font-medium">{s}</span>
-                ))}
+            {/* Stats */}
+            <div className="flex gap-6 mb-5">
+              <div className="text-center">
+                <p className="text-xl font-display font-bold text-foreground">{followersCount}</p>
+                <p className="text-xs text-muted-foreground">Followers</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xl font-display font-bold text-foreground">{followingCount}</p>
+                <p className="text-xs text-muted-foreground">Following</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xl font-display font-bold text-foreground">{posts.length}</p>
+                <p className="text-xs text-muted-foreground">Posts</p>
+              </div>
+            </div>
+
+            {/* Academic Info */}
+            {profile.role && (
+              <div className="rounded-xl border border-border/40 bg-surface/30 p-4 mb-5">
+                <div className="flex items-center gap-2 mb-3">
+                  {profile.role === "student" ? <GraduationCap className="h-4 w-4 text-primary" /> : <BookOpen className="h-4 w-4 text-primary" />}
+                  <h3 className="text-sm font-semibold text-foreground">{profile.role === "student" ? "Academic Info" : "Faculty Info"}</h3>
+                </div>
+                {profile.role === "student" && (profile.semester || profile.batch) && (
+                  <div className="flex flex-wrap gap-2">
+                    {profile.semester && <span className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full font-medium">{profile.semester}</span>}
+                    {profile.batch && <span className="text-xs bg-accent/10 text-accent px-3 py-1.5 rounded-full font-medium">Batch {profile.batch}</span>}
+                  </div>
+                )}
+                {profile.role === "faculty" && profile.subjects && profile.subjects.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.subjects.map((s) => (
+                      <span key={s} className="text-xs bg-accent/10 text-accent px-3 py-1.5 rounded-full font-medium">{s}</span>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
-            <div className="flex gap-5 text-sm text-muted-foreground mb-4">
-              <span><strong className="text-foreground font-semibold">{followersCount}</strong> followers</span>
-              <span><strong className="text-foreground font-semibold">{followingCount}</strong> following</span>
-            </div>
-
-            <div className="space-y-3">
-              {profile.bio && <p className="text-foreground/80 leading-relaxed">{profile.bio}</p>}
+            {/* Bio & Details */}
+            <div className="space-y-4">
+              {profile.bio && <p className="text-foreground/80 leading-relaxed text-[15px]">{profile.bio}</p>}
               <div className="flex flex-wrap gap-2">
                 {profile.favorite_music && (
-                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground bg-surface/60 rounded-full px-3 py-1">
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground bg-surface/50 rounded-full px-3.5 py-1.5 border border-border/30">
                     <Music className="h-3.5 w-3.5 text-primary" /> {profile.favorite_music}
                   </span>
                 )}
                 {profile.quote && (
-                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground bg-surface/60 rounded-full px-3 py-1 italic">
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground bg-surface/50 rounded-full px-3.5 py-1.5 italic border border-border/30">
                     <Quote className="h-3.5 w-3.5 text-primary" /> "{profile.quote}"
                   </span>
                 )}
@@ -162,15 +184,16 @@ export default function UserProfile() {
           </div>
         </motion.div>
 
-        <div className="px-4 md:px-6 mt-6 space-y-4">
-          <div className="flex items-center justify-between">
+        {/* Posts */}
+        <div className="px-1 mt-6 space-y-4">
+          <div className="flex items-center justify-between px-1">
             <h3 className="text-lg font-display font-semibold text-foreground">Posts</h3>
-            <span className="text-xs text-muted-foreground">{posts.length} posts</span>
+            <span className="text-xs text-muted-foreground bg-surface/40 px-2.5 py-1 rounded-full">{posts.length} posts</span>
           </div>
           {postsLoading ? (
             <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
           ) : posts.length === 0 ? (
-            <div className="text-center py-16 glass rounded-2xl">
+            <div className="text-center py-16 glass-card rounded-2xl">
               <p className="text-muted-foreground text-sm">No posts yet.</p>
             </div>
           ) : (

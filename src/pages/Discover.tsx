@@ -8,7 +8,7 @@ import { RoleBadge } from "@/components/RoleBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UserPlus, UserCheck, Search, Loader2, Users } from "lucide-react";
+import { UserPlus, UserCheck, Search, Loader2, Users, Compass } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
@@ -56,58 +56,75 @@ export default function Discover() {
   return (
     <AppLayout>
       <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">
-        <div className="flex items-center gap-3">
-          <Users className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-display font-bold text-foreground">Discover People</h2>
-        </div>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3"
+        >
+          <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center">
+            <Compass className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <div>
+            <h2 className="text-xl font-display font-bold text-foreground">Discover People</h2>
+            <p className="text-xs text-muted-foreground">Find and connect with your peers</p>
+          </div>
+        </motion.div>
 
-        <div className="relative">
+        {/* Search */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="relative"
+        >
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, interest, or role..."
-            className="pl-11 bg-surface/40 border-border/30 rounded-xl h-11 focus:ring-1 focus:ring-primary/30"
+            className="pl-11 bg-surface/40 border-border/30 rounded-xl h-12 focus:ring-1 focus:ring-primary/30 text-[15px]"
           />
-        </div>
+        </motion.div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-3">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <div className="relative">
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            </div>
             <p className="text-sm text-muted-foreground">Finding people...</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-24 glass rounded-2xl">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 glass-card rounded-2xl">
+            <Users className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground">No users found</p>
-          </div>
+          </motion.div>
         ) : (
           <div className="grid gap-3">
             {filtered.map((p, i) => {
               const name = p.display_name || p.username || "Anonymous";
               const isFollowing = followingSet.has(p.user_id);
-              const profileAny = p as any;
               return (
                 <motion.div
                   key={p.id}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ y: -2 }}
-                  className="glass rounded-2xl p-4 flex items-center justify-between group hover:border-border transition-all duration-200"
+                  className="glass-card rounded-2xl p-4 flex items-center justify-between group"
                 >
                   <Link to={`/user/${p.username || p.user_id}`} className="flex items-center gap-3 flex-1 min-w-0">
-                    <Avatar className="h-12 w-12 ring-2 ring-border/50 group-hover:ring-primary/30 transition-all duration-300">
+                    <Avatar className="h-12 w-12 ring-2 ring-border/30 group-hover:ring-primary/30 transition-all duration-300">
                       <AvatarImage src={p.avatar_url || undefined} />
                       <AvatarFallback className="bg-surface text-primary font-semibold">{name.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-semibold text-foreground group-hover:text-primary transition-colors text-sm truncate">{name}</p>
-                        <RoleBadge role={profileAny.role} />
+                        <RoleBadge role={p.role} />
                       </div>
                       {p.bio && <p className="text-xs text-muted-foreground truncate mt-0.5">{p.bio}</p>}
-                      {profileAny.role === "student" && profileAny.semester && (
-                        <p className="text-[10px] text-muted-foreground mt-0.5">{profileAny.semester}{profileAny.batch ? ` · Batch ${profileAny.batch}` : ""}</p>
+                      {p.role === "student" && p.semester && (
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{p.semester}{p.batch ? ` · Batch ${p.batch}` : ""}</p>
                       )}
                     </div>
                   </Link>
@@ -116,9 +133,9 @@ export default function Discover() {
                       onClick={() => toggleFollow(p.user_id)}
                       variant={isFollowing ? "secondary" : "default"}
                       size="sm"
-                      className={`rounded-xl shrink-0 ${isFollowing ? "bg-surface-hover" : "gradient-primary text-primary-foreground font-semibold"}`}
+                      className={`rounded-xl shrink-0 ${isFollowing ? "bg-surface-hover text-foreground" : "gradient-primary text-primary-foreground font-semibold"}`}
                     >
-                      {isFollowing ? <UserCheck className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
+                      {isFollowing ? <><UserCheck className="h-4 w-4 mr-1" /> Following</> : <><UserPlus className="h-4 w-4 mr-1" /> Follow</>}
                     </Button>
                   )}
                 </motion.div>

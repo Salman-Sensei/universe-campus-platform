@@ -8,7 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 
 const typeConfig = {
-  like: { icon: Heart, label: "liked your post", color: "text-pink-400", bg: "bg-pink-400/10" },
+  like: { icon: Heart, label: "liked your post", color: "text-rose-400", bg: "bg-rose-400/10" },
   comment: { icon: MessageCircle, label: "commented on your post", color: "text-sky-400", bg: "bg-sky-400/10" },
   follow: { icon: UserPlus, label: "started following you", color: "text-primary", bg: "bg-primary/10" },
 };
@@ -19,22 +19,28 @@ export default function Notifications() {
   return (
     <AppLayout>
       <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Bell className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-display font-bold text-foreground">Notifications</h2>
-            {unreadCount > 0 && (
-              <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                {unreadCount} new
-              </span>
-            )}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Bell className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-xl font-display font-bold text-foreground">Notifications</h2>
+              {unreadCount > 0 && (
+                <p className="text-xs text-muted-foreground">{unreadCount} unread</p>
+              )}
+            </div>
           </div>
           {unreadCount > 0 && (
             <Button variant="ghost" size="sm" onClick={markAllRead} className="text-xs text-muted-foreground hover:text-primary rounded-xl">
               <CheckCheck className="h-3.5 w-3.5 mr-1.5" /> Mark all read
             </Button>
           )}
-        </div>
+        </motion.div>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
@@ -45,7 +51,7 @@ export default function Notifications() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-24 glass rounded-2xl"
+            className="text-center py-24 glass-card rounded-2xl"
           >
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
               <Bell className="h-7 w-7 text-primary" />
@@ -67,12 +73,12 @@ export default function Notifications() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.03 }}
-                  className={`glass rounded-2xl p-4 flex items-center gap-3 transition-all duration-200 hover:border-border ${
+                  className={`glass-card rounded-2xl p-4 flex items-center gap-3 ${
                     !n.read ? "border-l-2 border-l-primary" : ""
                   }`}
                 >
                   <Link to={`/user/${n.actor_profile?.username || n.actor_id}`} className="shrink-0">
-                    <Avatar className="h-10 w-10 ring-2 ring-border/40">
+                    <Avatar className="h-10 w-10 ring-2 ring-border/30">
                       <AvatarImage src={n.actor_profile?.avatar_url || undefined} />
                       <AvatarFallback className="bg-surface text-primary font-semibold text-xs">{initials}</AvatarFallback>
                     </Avatar>
@@ -88,7 +94,7 @@ export default function Notifications() {
                       {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
                     </p>
                   </div>
-                  <div className={`h-8 w-8 rounded-full ${config.bg} flex items-center justify-center shrink-0`}>
+                  <div className={`h-9 w-9 rounded-xl ${config.bg} flex items-center justify-center shrink-0`}>
                     <Icon className={`h-4 w-4 ${config.color}`} />
                   </div>
                 </motion.div>

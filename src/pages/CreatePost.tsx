@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ImagePlus, Send, X, Sparkles } from "lucide-react";
+import { ImagePlus, Send, X, Sparkles, PenLine } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -50,6 +50,7 @@ export default function CreatePost() {
   };
 
   const charCount = content.length;
+  const charPercent = Math.min((charCount / 500) * 100, 100);
 
   return (
     <AppLayout>
@@ -60,7 +61,12 @@ export default function CreatePost() {
           transition={{ duration: 0.4 }}
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-display font-bold text-foreground">Create Post</h2>
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center">
+                <PenLine className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <h2 className="text-xl font-display font-bold text-foreground">Create Post</h2>
+            </div>
             <Link to="/ai">
               <Button variant="ghost" size="sm" className="text-accent hover:text-accent gap-1.5 rounded-xl">
                 <Sparkles className="h-4 w-4" /> AI Help
@@ -68,18 +74,31 @@ export default function CreatePost() {
             </Link>
           </div>
 
-          <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 space-y-5 noise">
+          <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-6 space-y-5">
             <div className="relative">
               <Textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Share an academic update, idea, or question..."
-                className="bg-surface/40 border-border/30 min-h-[160px] text-foreground resize-none rounded-xl text-[15px] leading-relaxed focus:ring-1 focus:ring-primary/30"
+                className="bg-surface/30 border-border/30 min-h-[160px] text-foreground resize-none rounded-xl text-[15px] leading-relaxed focus:ring-1 focus:ring-primary/30"
                 required
               />
-              <span className={`absolute bottom-3 right-3 text-xs ${charCount > 500 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                {charCount}/500
-              </span>
+              {/* Character counter with progress ring */}
+              <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                <svg className="h-6 w-6 -rotate-90" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" fill="none" stroke="hsl(var(--border))" strokeWidth="2" />
+                  <circle
+                    cx="12" cy="12" r="10" fill="none"
+                    stroke={charCount > 500 ? "hsl(var(--destructive))" : "hsl(var(--primary))"}
+                    strokeWidth="2"
+                    strokeDasharray={`${charPercent * 0.628} 62.8`}
+                    className="transition-all duration-300"
+                  />
+                </svg>
+                <span className={`text-xs ${charCount > 500 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  {500 - charCount}
+                </span>
+              </div>
             </div>
 
             {preview && (

@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Sparkles, Send, Copy, Loader2, Lightbulb, Wand2 } from "lucide-react";
+import { Sparkles, Send, Copy, Loader2, Lightbulb, Wand2, Bot } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
@@ -95,9 +95,10 @@ export default function AIAssistant() {
     <AppLayout>
       <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+          {/* Header */}
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl gradient-accent flex items-center justify-center glow-accent">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
+              <Bot className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
               <h2 className="text-xl font-display font-bold text-foreground">AI Assistant</h2>
@@ -105,10 +106,11 @@ export default function AIAssistant() {
             </div>
           </div>
 
-          <div className="flex gap-2 p-1 bg-surface/60 rounded-xl w-fit mb-6">
+          {/* Mode toggle */}
+          <div className="flex gap-1.5 p-1 bg-surface/50 rounded-xl w-fit mb-6 border border-border/30">
             <button
               onClick={() => setMode("suggest")}
-              className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
+              className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2.5 rounded-lg transition-all duration-200 ${
                 mode === "suggest" ? "gradient-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -116,7 +118,7 @@ export default function AIAssistant() {
             </button>
             <button
               onClick={() => setMode("improve")}
-              className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
+              className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2.5 rounded-lg transition-all duration-200 ${
                 mode === "improve" ? "gradient-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -124,12 +126,13 @@ export default function AIAssistant() {
             </button>
           </div>
 
-          <div className="glass rounded-2xl p-6 space-y-4 noise">
+          {/* Input */}
+          <div className="glass-card rounded-2xl p-6 space-y-4">
             <Textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder={mode === "suggest" ? "What topics interest you? Leave blank for auto-suggestions..." : "Paste your draft post here to improve..."}
-              className="bg-surface/40 border-border/30 min-h-[120px] resize-none rounded-xl focus:ring-1 focus:ring-primary/30 text-[15px] leading-relaxed"
+              className="bg-surface/30 border-border/30 min-h-[120px] resize-none rounded-xl focus:ring-1 focus:ring-primary/30 text-[15px] leading-relaxed"
             />
             <Button
               onClick={handleGenerate}
@@ -141,13 +144,14 @@ export default function AIAssistant() {
             </Button>
           </div>
 
+          {/* Result */}
           <AnimatePresence>
             {result && (
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -16 }}
-                className="glass rounded-2xl p-6 space-y-3 noise"
+                className="glass-card rounded-2xl p-6 space-y-3 mt-5"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
