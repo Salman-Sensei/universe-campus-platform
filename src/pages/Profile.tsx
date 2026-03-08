@@ -26,6 +26,8 @@ export default function Profile() {
     favorite_music: "",
     quote: "",
     interests: "",
+    semester: "",
+    batch: "",
   });
 
   const { posts, loading: postsLoading, refresh } = usePosts(user?.id);
