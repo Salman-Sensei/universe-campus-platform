@@ -1,8 +1,9 @@
-import { Home, User, PlusSquare, Search, LogOut, Sparkles, Bell, Settings, MessageCircle, Users, Ghost, Tag, FileText } from "lucide-react";
+import { Home, User, PlusSquare, Search, LogOut, Sparkles, Bell, Settings, MessageCircle, Users, Ghost, Tag, FileText, Shield } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
+import { useAdmin } from "@/hooks/useAdmin";
 import {
   Sidebar,
   SidebarContent,
