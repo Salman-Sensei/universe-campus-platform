@@ -12,17 +12,26 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap, Check, ChevronRight, ChevronLeft, User, Camera, Users, BookOpen, Loader2, UserPlus, UserCheck } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
+import avatarBoyBlackHair from "@/assets/avatars/boy-black-hair.png";
+import avatarBoyGlasses from "@/assets/avatars/boy-glasses.png";
+import avatarBoyHoodie from "@/assets/avatars/boy-hoodie.png";
+import avatarBoyHeadphones from "@/assets/avatars/boy-headphones.png";
+import avatarGirlLongHair from "@/assets/avatars/girl-long-hair.png";
+import avatarGirlShortHair from "@/assets/avatars/girl-short-hair.png";
+import avatarGirlGlasses from "@/assets/avatars/girl-glasses.png";
+import avatarGirlPonytail from "@/assets/avatars/girl-ponytail.png";
+
 const STEPS = ["Username", "Avatar", "Role", "Follow"];
 
 const AVATAR_OPTIONS = [
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=student1",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=student2",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=student3",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=faculty1",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=faculty2",
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=faculty3",
-  "https://api.dicebear.com/7.x/bottts/svg?seed=bot1",
-  "https://api.dicebear.com/7.x/bottts/svg?seed=bot2",
+  avatarBoyBlackHair,
+  avatarBoyGlasses,
+  avatarBoyHoodie,
+  avatarBoyHeadphones,
+  avatarGirlLongHair,
+  avatarGirlShortHair,
+  avatarGirlGlasses,
+  avatarGirlPonytail,
 ];
 
 interface DemoUser {
