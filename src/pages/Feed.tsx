@@ -2,8 +2,9 @@ import { AppLayout } from "@/components/AppLayout";
 import { PostCard } from "@/components/PostCard";
 import { TrendingPosts } from "@/components/TrendingPosts";
 import { PopularUsers } from "@/components/PopularUsers";
+import { DepartmentTrending } from "@/components/DepartmentTrending";
 import { usePosts } from "@/hooks/usePosts";
-import { Loader2, PenSquare, Sparkles, Flame } from "lucide-react";
+import { Loader2, PenSquare, Sparkles, Flame, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -20,7 +21,7 @@ export default function Feed() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-card rounded-2xl p-4 flex items-center gap-3"
+            className="glass-card rounded-2xl p-4 flex items-center gap-3 hover:translate-y-0"
           >
             <div className="flex-1">
               <Link to="/create">
@@ -34,6 +35,23 @@ export default function Feed() {
                 <PenSquare className="h-4 w-4 mr-1.5" /> Post
               </Button>
             </Link>
+          </motion.div>
+
+          {/* Trending department indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="flex items-center gap-2 px-1"
+          >
+            <span className="flex items-center gap-1.5 text-xs font-medium text-warning bg-warning/10 px-3 py-1.5 rounded-full">
+              <Flame className="h-3 w-3" />
+              🔥 Trending in Computer Science
+            </span>
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-surface/40 px-3 py-1.5 rounded-full">
+              <Zap className="h-3 w-3 text-primary" />
+              12 new discussions today
+            </span>
           </motion.div>
 
           {/* Feed header */}
@@ -62,7 +80,7 @@ export default function Feed() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-24 glass-card rounded-2xl"
+              className="text-center py-24 glass-card rounded-2xl hover:translate-y-0"
             >
               <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <PenSquare className="h-7 w-7 text-primary-foreground" />
@@ -91,6 +109,7 @@ export default function Feed() {
 
         {/* Right sidebar */}
         <aside className="hidden lg:flex flex-col gap-5 w-[300px] shrink-0 sticky top-20 self-start">
+          <DepartmentTrending />
           <TrendingPosts />
           <PopularUsers />
         </aside>
