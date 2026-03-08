@@ -22,6 +22,7 @@ const navItems = [
   { title: "Notifications", url: "/notifications", icon: Bell },
   { title: "Confessions", url: "/confessions", icon: Ghost },
   { title: "MarketPlace", url: "/marketplace", icon: Tag },
+  { title: "Study Partner", url: "/study-partner", icon: Users },
   { title: "AI Assistant", url: "/ai", icon: Sparkles },
   { title: "My Profile", url: "/profile", icon: User },
 ];
