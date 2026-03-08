@@ -445,10 +445,8 @@
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
   }
-}
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
+
+@keyframes shimmer {
 
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(12px); }
