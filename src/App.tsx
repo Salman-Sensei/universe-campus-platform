@@ -23,6 +23,7 @@ import ConfessionWall from "./pages/ConfessionWall";
 import Marketplace from "./pages/Marketplace";
 import StudyPartner from "./pages/StudyPartner";
 import NotesResources from "./pages/NotesResources";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
