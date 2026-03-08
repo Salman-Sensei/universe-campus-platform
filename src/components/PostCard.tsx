@@ -71,7 +71,7 @@ export function PostCard({
   const loadComments = async () => {
     const { data } = await supabase
       .from("comments")
-      .select("*, profiles:user_id(username, display_name, avatar_url)")
+      .select("*, profiles!comments_user_id_profiles_fkey(username, display_name, avatar_url)")
       .eq("post_id", id)
       .order("created_at", { ascending: true });
     if (data) setComments(data as unknown as Comment[]);

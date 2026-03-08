@@ -24,7 +24,7 @@ export function TrendingPosts() {
     const load = async () => {
       const { data: postsData } = await supabase
         .from("posts")
-        .select("id, content, created_at, user_id, profiles:user_id(username, display_name)")
+        .select("id, content, created_at, user_id, profiles!posts_user_id_profiles_fkey(username, display_name)")
         .order("created_at", { ascending: false })
         .limit(20);
 
