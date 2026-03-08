@@ -14,7 +14,7 @@ const typeConfig = {
 };
 
 export default function Notifications() {
-  const { notifications, loading, markAllRead, unreadCount } = useNotifications();
+  const { notifications, loading, markAllRead, unreadCount } = useNotificationsContext();
 
   return (
     <AppLayout>

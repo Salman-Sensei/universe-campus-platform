@@ -43,7 +43,7 @@ export function PostCard({
   likes_count, comments_count, is_liked, onRefresh,
 }: PostCardProps) {
   const { user } = useAuth();
-  const { createNotification } = useNotifications();
+  const { createNotification } = useNotificationsContext();
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
