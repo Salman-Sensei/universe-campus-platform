@@ -70,6 +70,8 @@ export default function Profile() {
         favorite_music: data.favorite_music || "",
         quote: data.quote || "",
         interests: data.interests?.join(", ") || "",
+        semester: data.semester || "",
+        batch: data.batch || "",
       });
     }
   };
