@@ -14,6 +14,7 @@ import type { Tables } from "@/integrations/supabase/types";
 
 export default function Discover() {
   const { user } = useAuth();
+  const { createNotification } = useNotifications();
   const [profiles, setProfiles] = useState<Tables<"profiles">[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
