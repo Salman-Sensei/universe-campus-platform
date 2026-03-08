@@ -70,7 +70,7 @@ function AppRoutes() {
       <Route path="/create" element={<OnboardingGuard><CreatePost /></OnboardingGuard>} />
       <Route path="/profile" element={<OnboardingGuard><Profile /></OnboardingGuard>} />
       <Route path="/discover" element={<OnboardingGuard><Discover /></OnboardingGuard>} />
-      <Route path="/ai" element={<OnboardingGuard><AIAssistant /></OnboardingGuard>} />
+      <Route path="/how-to-use" element={<OnboardingGuard><HowToUse /></OnboardingGuard>} />
       <Route path="/notifications" element={<OnboardingGuard><Notifications /></OnboardingGuard>} />
       <Route path="/confessions" element={<OnboardingGuard><ConfessionWall /></OnboardingGuard>} />
       <Route path="/marketplace" element={<OnboardingGuard><Marketplace /></OnboardingGuard>} />
