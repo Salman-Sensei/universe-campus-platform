@@ -240,6 +240,54 @@ export type Database = {
         }
         Relationships: []
       }
+      notes_resources: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          downloads: number
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          semester: string | null
+          subject: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          downloads?: number
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          semester?: string | null
+          subject: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          downloads?: number
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          semester?: string | null
+          subject?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           actor_id: string

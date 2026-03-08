@@ -1,4 +1,4 @@
-import { Home, User, PlusSquare, Search, LogOut, Sparkles, Bell, Settings, MessageCircle, Users, Ghost, Tag } from "lucide-react";
+import { Home, User, PlusSquare, Search, LogOut, Sparkles, Bell, Settings, MessageCircle, Users, Ghost, Tag, FileText } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,6 +23,7 @@ const navItems = [
   { title: "Confessions", url: "/confessions", icon: Ghost },
   { title: "MarketPlace", url: "/marketplace", icon: Tag },
   { title: "Study Partner", url: "/study-partner", icon: Users },
+  { title: "Notes", url: "/notes", icon: FileText },
   { title: "AI Assistant", url: "/ai", icon: Sparkles },
   { title: "My Profile", url: "/profile", icon: User },
 ];
