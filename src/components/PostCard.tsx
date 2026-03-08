@@ -63,6 +63,7 @@ export function PostCard({
       await supabase.from("likes").delete().eq("post_id", id).eq("user_id", user.id);
     } else {
       await supabase.from("likes").insert({ post_id: id, user_id: user.id });
+      createNotification(user_id, "like", id);
     }
     onRefresh();
   };
