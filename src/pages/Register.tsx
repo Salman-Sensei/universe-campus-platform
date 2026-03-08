@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -20,7 +22,7 @@ export default function Register() {
     setLoading(true);
     try {
       await signUp(email, password, username);
-      toast.success("Account created! Check your email to confirm.");
+      toast.success("Account created!");
       navigate("/feed");
     } catch (err: any) {
       toast.error(err.message || "Failed to sign up");
@@ -30,34 +32,43 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md glass rounded-2xl p-8 space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-display font-bold gradient-text">Join SpaceHub</h1>
-          <p className="text-muted-foreground mt-2">Create your account and start sharing</p>
+    <div className="min-h-screen flex items-center justify-center gradient-mesh px-4 relative">
+      <Link to="/" className="absolute top-6 left-6 text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 text-sm">
+        <ArrowLeft className="h-4 w-4" /> Back
+      </Link>
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-sm glass rounded-3xl p-8 space-y-6 noise"
+      >
+        <div className="text-center space-y-2">
+          <Link to="/" className="inline-block font-display font-bold text-lg gradient-text mb-2">SpaceHub</Link>
+          <h1 className="text-2xl font-display font-bold text-foreground">Create your account</h1>
+          <p className="text-muted-foreground text-sm">Join the community in seconds</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
-            <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} required className="bg-surface border-border/50" placeholder="cosmicuser" />
+          <div className="space-y-1.5">
+            <Label htmlFor="username" className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Username</Label>
+            <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} required className="bg-surface/60 border-border/40 rounded-xl h-11 focus:ring-1 focus:ring-primary/30" placeholder="cosmicuser" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-surface border-border/50" placeholder="you@example.com" />
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Email</Label>
+            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-surface/60 border-border/40 rounded-xl h-11 focus:ring-1 focus:ring-primary/30" placeholder="you@example.com" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-surface border-border/50" placeholder="••••••••" />
+          <div className="space-y-1.5">
+            <Label htmlFor="password" className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Password</Label>
+            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-surface/60 border-border/40 rounded-xl h-11 focus:ring-1 focus:ring-primary/30" placeholder="••••••••" />
           </div>
-          <Button type="submit" disabled={loading} className="w-full gradient-primary text-primary-foreground font-semibold">
+          <Button type="submit" disabled={loading} className="w-full gradient-primary text-primary-foreground font-bold rounded-xl h-11">
             {loading ? "Creating account..." : "Create Account"}
           </Button>
         </form>
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link to="/login" className="text-primary hover:underline">Sign in</Link>
+          <Link to="/login" className="text-primary font-medium hover:underline underline-offset-4">Sign in</Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }

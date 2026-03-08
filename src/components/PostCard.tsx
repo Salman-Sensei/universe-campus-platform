@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, Trash2, Share2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,13 +46,18 @@ export function PostCard({
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [liked, setLiked] = useState(is_liked);
+  const [likesNum, setLikesNum] = useState(likes_count);
 
   const displayName = profiles?.display_name || profiles?.username || "Anonymous";
   const initials = displayName.slice(0, 2).toUpperCase();
 
   const handleLike = async () => {
     if (!user) return toast.error("Sign in to like posts");
-    if (is_liked) {
+    // Optimistic update
+    setLiked(!liked);
+    setLikesNum(liked ? likesNum - 1 : likesNum + 1);
+    if (liked) {
       await supabase.from("likes").delete().eq("post_id", id).eq("user_id", user.id);
     } else {
       await supabase.from("likes").insert({ post_id: id, user_id: user.id });
@@ -97,100 +102,139 @@ export function PostCard({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
+    <motion.article
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass rounded-lg p-5 space-y-3"
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className="glass rounded-2xl overflow-hidden group hover:border-border transition-all duration-300"
     >
-      <div className="flex items-center justify-between">
-        <Link to={`/user/${profiles?.username || user_id}`} className="flex items-center gap-3 group">
-          <Avatar className="h-10 w-10 ring-2 ring-primary/20">
-            <AvatarImage src={profiles?.avatar_url || undefined} />
-            <AvatarFallback className="bg-primary/10 text-primary text-sm">{initials}</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="font-medium text-foreground group-hover:text-primary transition-colors">{displayName}</p>
-            <p className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
-            </p>
+      <div className="p-5 md:p-6 space-y-4">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <Link to={`/user/${profiles?.username || user_id}`} className="flex items-center gap-3 group/link">
+            <div className="relative">
+              <Avatar className="h-11 w-11 ring-2 ring-border/50 group-hover/link:ring-primary/40 transition-all duration-300">
+                <AvatarImage src={profiles?.avatar_url || undefined} />
+                <AvatarFallback className="bg-surface text-primary font-semibold text-sm">{initials}</AvatarFallback>
+              </Avatar>
+              <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-primary/80 border-2 border-card" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground group-hover/link:text-primary transition-colors text-sm">{displayName}</p>
+              <p className="text-xs text-muted-foreground">
+                {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
+              </p>
+            </div>
+          </Link>
+          {user?.id === user_id && (
+            <Button variant="ghost" size="icon" onClick={handleDelete} className="text-muted-foreground hover:text-destructive h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+
+        {/* Content */}
+        <p className="text-foreground/90 whitespace-pre-wrap leading-relaxed text-[15px]">{content}</p>
+
+        {/* Image */}
+        {image_url && (
+          <div className="relative -mx-5 md:-mx-6 overflow-hidden">
+            <img
+              src={image_url}
+              alt="Post"
+              className="w-full max-h-[28rem] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
+            />
           </div>
-        </Link>
-        {user?.id === user_id && (
-          <Button variant="ghost" size="icon" onClick={handleDelete} className="text-muted-foreground hover:text-destructive">
-            <Trash2 className="h-4 w-4" />
-          </Button>
         )}
+
+        {/* Actions */}
+        <div className="flex items-center gap-1 pt-1">
+          <button
+            onClick={handleLike}
+            className={`flex items-center gap-1.5 text-sm rounded-full px-3 py-1.5 transition-all duration-200 ${
+              liked
+                ? "text-primary bg-primary/10"
+                : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+            }`}
+          >
+            <motion.div
+              animate={liked ? { scale: [1, 1.3, 1] } : {}}
+              transition={{ duration: 0.3 }}
+            >
+              <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
+            </motion.div>
+            <span className="font-medium">{likesNum}</span>
+          </button>
+          <button
+            onClick={toggleComments}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full px-3 py-1.5 transition-all duration-200"
+          >
+            <MessageCircle className="h-4 w-4" />
+            <span className="font-medium">{comments_count}</span>
+          </button>
+          <button
+            onClick={() => { navigator.clipboard.writeText(window.location.origin + `/post/${id}`); toast.success("Link copied!"); }}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full px-3 py-1.5 transition-all duration-200 ml-auto"
+          >
+            <Share2 className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
-      <p className="text-foreground/90 whitespace-pre-wrap">{content}</p>
-
-      {image_url && (
-        <img src={image_url} alt="Post" className="rounded-md w-full max-h-96 object-cover" />
-      )}
-
-      <div className="flex items-center gap-4 pt-2">
-        <button
-          onClick={handleLike}
-          className={`flex items-center gap-1.5 text-sm transition-colors ${
-            is_liked ? "text-primary" : "text-muted-foreground hover:text-primary"
-          }`}
-        >
-          <Heart className={`h-4 w-4 ${is_liked ? "fill-current" : ""}`} />
-          {likes_count}
-        </button>
-        <button
-          onClick={toggleComments}
-          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
-        >
-          <MessageCircle className="h-4 w-4" />
-          {comments_count}
-        </button>
-      </div>
-
+      {/* Comments */}
       <AnimatePresence>
         {showComments && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="space-y-3 pt-3 border-t border-border/50 overflow-hidden"
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="border-t border-border/40 overflow-hidden"
           >
-            {comments.map((c) => (
-              <div key={c.id} className="flex gap-2">
-                <Avatar className="h-7 w-7">
-                  <AvatarImage src={c.profiles?.avatar_url || undefined} />
-                  <AvatarFallback className="bg-surface text-xs">
-                    {(c.profiles?.display_name || "A").slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 bg-surface rounded-md p-2">
-                  <p className="text-xs font-medium text-foreground">{c.profiles?.display_name || c.profiles?.username}</p>
-                  <p className="text-sm text-foreground/80">{c.content}</p>
-                </div>
-              </div>
-            ))}
-            {user && (
-              <div className="flex gap-2">
-                <Textarea
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Write a comment..."
-                  className="min-h-[40px] bg-surface border-border/50 text-sm resize-none"
-                  rows={1}
-                />
-                <Button
-                  onClick={handleComment}
-                  disabled={submitting || !newComment.trim()}
-                  size="sm"
-                  className="self-end"
+            <div className="p-5 md:p-6 space-y-3">
+              {comments.map((c, i) => (
+                <motion.div
+                  key={c.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex gap-2.5"
                 >
-                  Post
-                </Button>
-              </div>
-            )}
+                  <Avatar className="h-7 w-7 mt-0.5">
+                    <AvatarImage src={c.profiles?.avatar_url || undefined} />
+                    <AvatarFallback className="bg-surface text-xs font-medium">
+                      {(c.profiles?.display_name || "A").slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 bg-surface/80 rounded-xl px-3 py-2">
+                    <p className="text-xs font-semibold text-foreground">{c.profiles?.display_name || c.profiles?.username}</p>
+                    <p className="text-sm text-foreground/80 leading-relaxed">{c.content}</p>
+                  </div>
+                </motion.div>
+              ))}
+              {user && (
+                <div className="flex gap-2 pt-1">
+                  <Textarea
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Write a comment..."
+                    className="min-h-[38px] bg-surface/60 border-border/30 text-sm resize-none rounded-xl focus:ring-1 focus:ring-primary/30"
+                    rows={1}
+                  />
+                  <Button
+                    onClick={handleComment}
+                    disabled={submitting || !newComment.trim()}
+                    size="sm"
+                    className="self-end gradient-primary text-primary-foreground rounded-xl font-semibold"
+                  >
+                    Post
+                  </Button>
+                </div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </motion.article>
   );
 }
