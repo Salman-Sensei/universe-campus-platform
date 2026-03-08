@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Pencil, Save, Loader2, Music, Quote, Tag } from "lucide-react";
+import { Pencil, Save, Loader2, Music, Quote, Tag, Camera } from "lucide-react";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
 
 export default function Profile() {
@@ -30,44 +31,35 @@ export default function Profile() {
 
   useEffect(() => {
     if (!user) return;
-    supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .single()
-      .then(({ data }) => {
-        if (data) {
-          setProfile(data);
-          setForm({
-            display_name: data.display_name || "",
-            bio: data.bio || "",
-            favorite_music: data.favorite_music || "",
-            quote: data.quote || "",
-            interests: data.interests?.join(", ") || "",
-          });
-        }
-        setLoading(false);
-      });
+    supabase.from("profiles").select("*").eq("user_id", user.id).single().then(({ data }) => {
+      if (data) {
+        setProfile(data);
+        setForm({
+          display_name: data.display_name || "",
+          bio: data.bio || "",
+          favorite_music: data.favorite_music || "",
+          quote: data.quote || "",
+          interests: data.interests?.join(", ") || "",
+        });
+      }
+      setLoading(false);
+    });
   }, [user]);
 
   const handleSave = async () => {
     if (!user) return;
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        display_name: form.display_name || null,
-        bio: form.bio || null,
-        favorite_music: form.favorite_music || null,
-        quote: form.quote || null,
-        interests: form.interests ? form.interests.split(",").map((s) => s.trim()).filter(Boolean) : null,
-      })
-      .eq("user_id", user.id);
+    const { error } = await supabase.from("profiles").update({
+      display_name: form.display_name || null,
+      bio: form.bio || null,
+      favorite_music: form.favorite_music || null,
+      quote: form.quote || null,
+      interests: form.interests ? form.interests.split(",").map((s) => s.trim()).filter(Boolean) : null,
+    }).eq("user_id", user.id);
 
     if (error) toast.error("Failed to update profile");
     else {
       toast.success("Profile updated!");
       setEditing(false);
-      // Refresh profile
       const { data } = await supabase.from("profiles").select("*").eq("user_id", user.id).single();
       if (data) setProfile(data);
     }
@@ -96,91 +88,127 @@ export default function Profile() {
   return (
     <AppLayout>
       <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">
-        {/* Profile Header */}
-        <div className="glass rounded-xl p-6 space-y-4">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass rounded-2xl overflow-hidden noise"
+        >
+          {/* Banner area */}
+          <div className="h-32 bg-gradient-to-br from-primary/20 via-accent/10 to-transparent relative">
+            <div className="absolute inset-0 shimmer" />
+          </div>
+
+          <div className="px-6 pb-6 -mt-12">
+            <div className="flex items-end justify-between mb-4">
               <label className="cursor-pointer group relative">
-                <Avatar className="h-20 w-20 ring-2 ring-primary/30">
+                <Avatar className="h-24 w-24 ring-4 ring-card">
                   <AvatarImage src={profile?.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary/10 text-primary text-xl">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback className="bg-surface text-primary text-2xl font-bold">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <div className="absolute inset-0 bg-background/50 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                  <Pencil className="h-5 w-5 text-foreground" />
+                <div className="absolute inset-0 bg-background/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-200 backdrop-blur-sm">
+                  <Camera className="h-5 w-5 text-foreground" />
                 </div>
                 <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
               </label>
-              <div>
-                <h2 className="text-xl font-display font-bold text-foreground">{displayName}</h2>
-                <p className="text-sm text-muted-foreground">@{profile?.username || "user"}</p>
-              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editing ? handleSave() : setEditing(true)}
+                className="text-primary hover:bg-primary/10 rounded-xl font-semibold"
+              >
+                {editing ? <><Save className="mr-1.5 h-4 w-4" /> Save</> : <><Pencil className="mr-1.5 h-4 w-4" /> Edit Profile</>}
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => editing ? handleSave() : setEditing(true)}
-              className="text-primary"
-            >
-              {editing ? <><Save className="mr-1 h-4 w-4" /> Save</> : <><Pencil className="mr-1 h-4 w-4" /> Edit</>}
-            </Button>
-          </div>
 
-          {editing ? (
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <Label>Display Name</Label>
-                <Input value={form.display_name} onChange={(e) => setForm({ ...form, display_name: e.target.value })} className="bg-surface border-border/50" />
-              </div>
-              <div className="space-y-1">
-                <Label>Bio</Label>
-                <Textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} className="bg-surface border-border/50 resize-none" rows={3} />
-              </div>
-              <div className="space-y-1">
-                <Label>Favorite Music</Label>
-                <Input value={form.favorite_music} onChange={(e) => setForm({ ...form, favorite_music: e.target.value })} className="bg-surface border-border/50" placeholder="e.g. Lo-fi, Indie Rock" />
-              </div>
-              <div className="space-y-1">
-                <Label>Quote</Label>
-                <Input value={form.quote} onChange={(e) => setForm({ ...form, quote: e.target.value })} className="bg-surface border-border/50" placeholder="Your favorite quote" />
-              </div>
-              <div className="space-y-1">
-                <Label>Interests (comma separated)</Label>
-                <Input value={form.interests} onChange={(e) => setForm({ ...form, interests: e.target.value })} className="bg-surface border-border/50" placeholder="coding, music, space" />
-              </div>
+            <div className="mb-4">
+              <h2 className="text-2xl font-display font-bold text-foreground">{displayName}</h2>
+              <p className="text-sm text-muted-foreground">@{profile?.username || "user"}</p>
             </div>
-          ) : (
-            <div className="space-y-2">
-              {profile?.bio && <p className="text-foreground/80">{profile.bio}</p>}
-              {profile?.favorite_music && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Music className="h-4 w-4 text-primary" /> {profile.favorite_music}
-                </div>
-              )}
-              {profile?.quote && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground italic">
-                  <Quote className="h-4 w-4 text-primary" /> "{profile.quote}"
-                </div>
-              )}
-              {profile?.interests && profile.interests.length > 0 && (
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Tag className="h-4 w-4 text-primary" />
-                  {profile.interests.map((i) => (
-                    <span key={i} className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{i}</span>
+
+            <AnimatePresence mode="wait">
+              {editing ? (
+                <motion.div
+                  key="edit"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-3 overflow-hidden"
+                >
+                  {[
+                    { key: "display_name", label: "Display Name", placeholder: "Your display name" },
+                    { key: "favorite_music", label: "Favorite Music", placeholder: "e.g. Lo-fi, Indie Rock" },
+                    { key: "quote", label: "Favorite Quote", placeholder: "Your favorite quote" },
+                    { key: "interests", label: "Interests (comma separated)", placeholder: "coding, music, space" },
+                  ].map((field) => (
+                    <div key={field.key} className="space-y-1">
+                      <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{field.label}</Label>
+                      <Input
+                        value={form[field.key as keyof typeof form]}
+                        onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                        className="bg-surface/40 border-border/30 rounded-xl h-10 focus:ring-1 focus:ring-primary/30"
+                        placeholder={field.placeholder}
+                      />
+                    </div>
                   ))}
-                </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Bio</Label>
+                    <Textarea
+                      value={form.bio}
+                      onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                      className="bg-surface/40 border-border/30 resize-none rounded-xl focus:ring-1 focus:ring-primary/30"
+                      rows={3}
+                      placeholder="Tell us about yourself..."
+                    />
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="view"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="space-y-3"
+                >
+                  {profile?.bio && <p className="text-foreground/80 leading-relaxed">{profile.bio}</p>}
+                  <div className="flex flex-wrap gap-3">
+                    {profile?.favorite_music && (
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground bg-surface/60 rounded-full px-3 py-1">
+                        <Music className="h-3.5 w-3.5 text-primary" /> {profile.favorite_music}
+                      </div>
+                    )}
+                    {profile?.quote && (
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground bg-surface/60 rounded-full px-3 py-1 italic">
+                        <Quote className="h-3.5 w-3.5 text-primary" /> "{profile.quote}"
+                      </div>
+                    )}
+                  </div>
+                  {profile?.interests && profile.interests.length > 0 && (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Tag className="h-3.5 w-3.5 text-primary" />
+                      {profile.interests.map((i) => (
+                        <span key={i} className="text-xs bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium">{i}</span>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
               )}
-            </div>
-          )}
-        </div>
+            </AnimatePresence>
+          </div>
+        </motion.div>
 
-        {/* Posts */}
-        <h3 className="text-lg font-display font-semibold text-foreground">Your Posts</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-display font-semibold text-foreground">Your Posts</h3>
+          <span className="text-xs text-muted-foreground">{posts.length} posts</span>
+        </div>
         {postsLoading ? (
           <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
         ) : posts.length === 0 ? (
-          <p className="text-muted-foreground text-center py-10">No posts yet.</p>
+          <div className="text-center py-16 glass rounded-2xl">
+            <p className="text-muted-foreground text-sm">No posts yet. Share your first thought!</p>
+          </div>
         ) : (
-          posts.map((post) => <PostCard key={post.id} {...post} onRefresh={refresh} />)
+          <div className="space-y-4">
+            {posts.map((post) => <PostCard key={post.id} {...post} onRefresh={refresh} />)}
+          </div>
         )}
       </div>
     </AppLayout>

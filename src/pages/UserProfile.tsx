@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserPlus, UserMinus, Music, Quote, Tag, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
 
 export default function UserProfile() {
@@ -19,36 +20,23 @@ export default function UserProfile() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
-
   const { posts, loading: postsLoading, refresh } = usePosts(profile?.user_id);
 
   useEffect(() => {
     if (!username) return;
     const load = async () => {
       setLoading(true);
-      const { data } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("username", username)
-        .single();
-
+      const { data } = await supabase.from("profiles").select("*").eq("username", username).single();
       if (data) {
         setProfile(data);
-
         const [followers, following] = await Promise.all([
           supabase.from("follows").select("id", { count: "exact" }).eq("following_id", data.user_id),
           supabase.from("follows").select("id", { count: "exact" }).eq("follower_id", data.user_id),
         ]);
         setFollowersCount(followers.count || 0);
         setFollowingCount(following.count || 0);
-
         if (user) {
-          const { data: followData } = await supabase
-            .from("follows")
-            .select("id")
-            .eq("follower_id", user.id)
-            .eq("following_id", data.user_id)
-            .maybeSingle();
+          const { data: followData } = await supabase.from("follows").select("id").eq("follower_id", user.id).eq("following_id", data.user_id).maybeSingle();
           setIsFollowing(!!followData);
         }
       }
@@ -72,15 +60,10 @@ export default function UserProfile() {
   };
 
   if (loading) return (
-    <AppLayout>
-      <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-    </AppLayout>
+    <AppLayout><div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div></AppLayout>
   );
-
   if (!profile) return (
-    <AppLayout>
-      <div className="text-center py-20 text-muted-foreground">User not found</div>
-    </AppLayout>
+    <AppLayout><div className="text-center py-20 text-muted-foreground">User not found</div></AppLayout>
   );
 
   const displayName = profile.display_name || profile.username || "Anonymous";
@@ -89,59 +72,79 @@ export default function UserProfile() {
   return (
     <AppLayout>
       <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">
-        <div className="glass rounded-xl p-6 space-y-4">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-20 w-20 ring-2 ring-primary/30">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass rounded-2xl overflow-hidden noise"
+        >
+          <div className="h-32 bg-gradient-to-br from-primary/20 via-accent/10 to-transparent relative">
+            <div className="absolute inset-0 shimmer" />
+          </div>
+          <div className="px-6 pb-6 -mt-12">
+            <div className="flex items-end justify-between mb-4">
+              <Avatar className="h-24 w-24 ring-4 ring-card">
                 <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary/10 text-primary text-xl">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="bg-surface text-primary text-2xl font-bold">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
-              <div>
-                <h2 className="text-xl font-display font-bold text-foreground">{displayName}</h2>
-                <p className="text-sm text-muted-foreground">@{profile.username || "user"}</p>
-                <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
-                  <span><strong className="text-foreground">{followersCount}</strong> followers</span>
-                  <span><strong className="text-foreground">{followingCount}</strong> following</span>
-                </div>
-              </div>
+              {!isOwnProfile && user && (
+                <Button
+                  onClick={toggleFollow}
+                  variant={isFollowing ? "secondary" : "default"}
+                  size="sm"
+                  className={`rounded-xl font-semibold ${isFollowing ? "bg-surface-hover" : "gradient-primary text-primary-foreground"}`}
+                >
+                  {isFollowing ? <><UserMinus className="mr-1.5 h-4 w-4" /> Unfollow</> : <><UserPlus className="mr-1.5 h-4 w-4" /> Follow</>}
+                </Button>
+              )}
             </div>
-            {!isOwnProfile && user && (
-              <Button onClick={toggleFollow} variant={isFollowing ? "secondary" : "default"} size="sm" className={isFollowing ? "" : "gradient-primary text-primary-foreground"}>
-                {isFollowing ? <><UserMinus className="mr-1 h-4 w-4" /> Unfollow</> : <><UserPlus className="mr-1 h-4 w-4" /> Follow</>}
-              </Button>
-            )}
-          </div>
 
-          <div className="space-y-2">
-            {profile.bio && <p className="text-foreground/80">{profile.bio}</p>}
-            {profile.favorite_music && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Music className="h-4 w-4 text-primary" /> {profile.favorite_music}
+            <h2 className="text-2xl font-display font-bold text-foreground">{displayName}</h2>
+            <p className="text-sm text-muted-foreground mb-2">@{profile.username || "user"}</p>
+            <div className="flex gap-5 text-sm text-muted-foreground mb-4">
+              <span><strong className="text-foreground font-semibold">{followersCount}</strong> followers</span>
+              <span><strong className="text-foreground font-semibold">{followingCount}</strong> following</span>
+            </div>
+
+            <div className="space-y-3">
+              {profile.bio && <p className="text-foreground/80 leading-relaxed">{profile.bio}</p>}
+              <div className="flex flex-wrap gap-2">
+                {profile.favorite_music && (
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground bg-surface/60 rounded-full px-3 py-1">
+                    <Music className="h-3.5 w-3.5 text-primary" /> {profile.favorite_music}
+                  </span>
+                )}
+                {profile.quote && (
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground bg-surface/60 rounded-full px-3 py-1 italic">
+                    <Quote className="h-3.5 w-3.5 text-primary" /> "{profile.quote}"
+                  </span>
+                )}
               </div>
-            )}
-            {profile.quote && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground italic">
-                <Quote className="h-4 w-4 text-primary" /> "{profile.quote}"
-              </div>
-            )}
-            {profile.interests && profile.interests.length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap">
-                <Tag className="h-4 w-4 text-primary" />
-                {profile.interests.map((i) => (
-                  <span key={i} className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{i}</span>
-                ))}
-              </div>
-            )}
+              {profile.interests && profile.interests.length > 0 && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Tag className="h-3.5 w-3.5 text-primary" />
+                  {profile.interests.map((i) => (
+                    <span key={i} className="text-xs bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium">{i}</span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+        </motion.div>
+
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-display font-semibold text-foreground">Posts</h3>
+          <span className="text-xs text-muted-foreground">{posts.length} posts</span>
         </div>
-
-        <h3 className="text-lg font-display font-semibold text-foreground">Posts</h3>
         {postsLoading ? (
           <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
         ) : posts.length === 0 ? (
-          <p className="text-muted-foreground text-center py-10">No posts yet.</p>
+          <div className="text-center py-16 glass rounded-2xl">
+            <p className="text-muted-foreground text-sm">No posts yet.</p>
+          </div>
         ) : (
-          posts.map((post) => <PostCard key={post.id} {...post} onRefresh={refresh} />)
+          <div className="space-y-4">
+            {posts.map((post) => <PostCard key={post.id} {...post} onRefresh={refresh} />)}
+          </div>
         )}
       </div>
     </AppLayout>
