@@ -1,8 +1,9 @@
-import { Home, User, PlusSquare, Search, LogOut, Sparkles, Bell, Settings, MessageCircle, Users, Ghost, Tag, FileText } from "lucide-react";
+import { Home, User, PlusSquare, Search, LogOut, Sparkles, Bell, Settings, MessageCircle, Users, Ghost, Tag, FileText, Shield } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
+import { useAdmin } from "@/hooks/useAdmin";
 import {
   Sidebar,
   SidebarContent,
@@ -34,6 +35,12 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { unreadCount } = useNotificationsContext();
+  const { isAdmin } = useAdmin();
+
+  const allNavItems = [
+    ...navItems,
+    ...(isAdmin ? [{ title: "Admin", url: "/admin", icon: Shield }] : []),
+  ];
 
   const handleSignOut = async () => {
     await signOut();
@@ -55,7 +62,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
-              {navItems.map((item) => (
+              {allNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink
