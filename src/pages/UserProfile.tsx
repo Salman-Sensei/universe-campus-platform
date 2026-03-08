@@ -46,6 +46,8 @@ export default function UserProfile() {
     load();
   }, [username, user]);
 
+  const { createNotification } = useNotificationsContext();
+
   const toggleFollow = async () => {
     if (!user || !profile) return;
     if (isFollowing) {
@@ -56,6 +58,7 @@ export default function UserProfile() {
       await supabase.from("follows").insert({ follower_id: user.id, following_id: profile.user_id });
       setIsFollowing(true);
       setFollowersCount((c) => c + 1);
+      createNotification(profile.user_id, "follow");
     }
     toast.success(isFollowing ? "Unfollowed" : "Following!");
   };
