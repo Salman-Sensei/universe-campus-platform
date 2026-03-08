@@ -81,21 +81,27 @@ export default function UserProfile() {
           animate={{ opacity: 1, y: 0 }}
           className="glass rounded-2xl overflow-hidden noise"
         >
-          <div className="h-32 bg-gradient-to-br from-primary/20 via-accent/10 to-transparent relative">
-            <div className="absolute inset-0 shimmer" />
+          {/* Cover Banner */}
+          <div className="relative h-[250px] overflow-hidden">
+            {profile.banner_url ? (
+              <img src={profile.banner_url} alt="Profile banner" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-primary/30 via-accent/20 to-primary/10" />
+            )}
           </div>
-          <div className="px-6 pb-6 -mt-12">
-            <div className="flex items-end justify-between mb-4">
-              <Avatar className="h-24 w-24 ring-4 ring-card">
+
+          <div className="px-6 pb-6 -mt-16 relative z-10">
+            <div className="flex items-end justify-between mb-3">
+              <Avatar className="h-28 w-28 ring-4 ring-card shadow-lg">
                 <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-surface text-primary text-2xl font-bold">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="bg-surface text-primary text-3xl font-bold">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               {!isOwnProfile && user && (
                 <Button
                   onClick={toggleFollow}
                   variant={isFollowing ? "secondary" : "default"}
                   size="sm"
-                  className={`rounded-xl font-semibold ${isFollowing ? "bg-surface-hover" : "gradient-primary text-primary-foreground"}`}
+                  className={`rounded-xl font-semibold mb-1 ${isFollowing ? "bg-surface-hover" : "gradient-primary text-primary-foreground"}`}
                 >
                   {isFollowing ? <><UserMinus className="mr-1.5 h-4 w-4" /> Unfollow</> : <><UserPlus className="mr-1.5 h-4 w-4" /> Follow</>}
                 </Button>
