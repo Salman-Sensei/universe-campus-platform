@@ -27,7 +27,7 @@ export function usePosts(userId?: string) {
     setLoading(true);
     let query = supabase
       .from("posts")
-      .select("*, profiles:user_id(username, display_name, avatar_url)")
+      .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url)")
       .order("created_at", { ascending: false });
 
     if (userId) {
