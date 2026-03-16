@@ -459,9 +459,7 @@ function EventsTab() {
             <p className="font-medium">{e.title}</p>
             <p className="text-xs text-muted-foreground">{new Date(e.event_date).toLocaleString()} · {e.category} · {e.location || "TBD"}</p>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(e.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(e.id)} label="this event" />
         </div>
       ))}
     </div>
