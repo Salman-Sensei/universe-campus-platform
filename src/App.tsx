@@ -24,6 +24,7 @@ import Marketplace from "./pages/Marketplace";
 import StudyPartner from "./pages/StudyPartner";
 import NotesResources from "./pages/NotesResources";
 import AdminDashboard from "./pages/AdminDashboard";
+import AIAssistant from "./pages/AIAssistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
