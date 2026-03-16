@@ -385,9 +385,7 @@ function ConfessionsTab() {
       {confessions.map((c) => (
         <div key={c.id} className="flex items-start justify-between p-3 rounded-xl border border-border/40 bg-card">
           <p className="text-sm flex-1 min-w-0 truncate">{c.content}</p>
-          <Button size="sm" variant="ghost" className="text-destructive shrink-0" onClick={() => handleDelete(c.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(c.id)} label="this confession" />
         </div>
       ))}
     </div>
