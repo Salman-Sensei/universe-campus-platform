@@ -189,9 +189,23 @@ export function PostCard({
                 <DropdownMenuItem onClick={() => { setEditingPost(true); setEditPostContent(content); }}>
                   <Pencil className="h-3.5 w-3.5 mr-2" /> Edit Post
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive" onClick={handleDeletePost}>
-                  <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete Post
-                </DropdownMenuItem>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                      <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete Post
+                    </DropdownMenuItem>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                      <AlertDialogDescription>This action cannot be undone. The post and all its comments will be permanently deleted.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeletePost} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
