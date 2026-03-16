@@ -267,9 +267,7 @@ function SubjectsTab() {
               <Button size="sm" variant="ghost" onClick={() => { setEditSubject(s); setForm({ name: s.name, code: s.code || "", department: s.department || "", semester: s.semester || "" }); }}>
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(s.id)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              <ConfirmDeleteButton onConfirm={() => handleDelete(s.id)} label="this subject" />
             </div>
           </div>
         ))}
