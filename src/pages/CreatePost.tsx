@@ -23,6 +23,7 @@ export default function CreatePost() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (preview) URL.revokeObjectURL(preview);
       setImageFile(file);
       setPreview(URL.createObjectURL(file));
     }

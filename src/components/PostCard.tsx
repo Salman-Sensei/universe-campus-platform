@@ -351,9 +351,23 @@ export function PostCard({
                                 <DropdownMenuItem onClick={() => startEditComment(c)}>
                                   <Pencil className="h-3 w-3 mr-1.5" /> Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteComment(c.id)}>
-                                  <Trash2 className="h-3 w-3 mr-1.5" /> Delete
-                                </DropdownMenuItem>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                                      <Trash2 className="h-3 w-3 mr-1.5" /> Delete
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete this comment?</AlertDialogTitle>
+                                      <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDeleteComment(c.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           )}

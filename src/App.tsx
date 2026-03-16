@@ -78,6 +78,7 @@ function AppRoutes() {
       <Route path="/study-partner" element={<OnboardingGuard><StudyPartner /></OnboardingGuard>} />
       <Route path="/notes" element={<OnboardingGuard><NotesResources /></OnboardingGuard>} />
       <Route path="/admin" element={<OnboardingGuard><AdminDashboard /></OnboardingGuard>} />
+      <Route path="/ai-assistant" element={<OnboardingGuard><AIAssistant /></OnboardingGuard>} />
       <Route path="/user/:username" element={<OnboardingGuard><UserProfile /></OnboardingGuard>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
