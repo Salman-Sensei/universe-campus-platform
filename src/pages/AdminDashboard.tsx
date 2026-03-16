@@ -314,9 +314,7 @@ function PostsTab() {
             <p className="text-xs text-muted-foreground mb-1">@{p.profiles?.username || "unknown"}</p>
             <p className="text-sm truncate">{p.content}</p>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive shrink-0" onClick={() => handleDelete(p.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(p.id)} label="this post" />
         </div>
       ))}
     </div>
