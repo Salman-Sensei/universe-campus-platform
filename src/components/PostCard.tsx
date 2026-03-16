@@ -73,11 +73,20 @@ export function PostCard({
       setLikeAnimating(true);
       setTimeout(() => setLikeAnimating(false), 600);
     }
-    if (!newLiked) {
-      await supabase.from("likes").delete().eq("post_id", id).eq("user_id", user.id);
-    } else {
-      await supabase.from("likes").insert({ post_id: id, user_id: user.id });
-      createNotification(user_id, "like", id);
+    try {
+      if (!newLiked) {
+        const { error } = await supabase.from("likes").delete().eq("post_id", id).eq("user_id", user.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("likes").insert({ post_id: id, user_id: user.id });
+        if (error) throw error;
+        createNotification(user_id, "like", id);
+      }
+    } catch {
+      // Revert optimistic update on failure
+      setLiked(!newLiked);
+      setLikesNum(newLiked ? likesNum : likesNum + 1);
+      toast.error("Failed to update like");
     }
     onRefresh();
   };
