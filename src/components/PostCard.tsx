@@ -155,7 +155,7 @@ export function PostCard({
                 <AvatarImage src={profiles?.avatar_url || undefined} />
                 <AvatarFallback className="bg-surface text-primary font-semibold text-sm">{initials}</AvatarFallback>
               </Avatar>
-              <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-success border-2 border-card" />
+              
             </div>
             <div>
               <div className="flex items-center gap-2">
