@@ -12,7 +12,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const [resettingPassword, setResettingPassword] = useState(false);
+  const { signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
