@@ -525,9 +525,7 @@ function CommunitiesTab() {
               <p className="text-xs text-muted-foreground">{c.description || "No description"}</p>
             </div>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(c.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(c.id)} label="this community" />
         </div>
       ))}
     </div>
