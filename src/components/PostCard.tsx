@@ -274,7 +274,7 @@ export function PostCard({
             <span>{comments_count}</span>
           </button>
           <button
-            onClick={() => { navigator.clipboard.writeText(window.location.origin + `/post/${id}`); toast.success("Link copied!"); }}
+            onClick={() => { navigator.clipboard.writeText(window.location.origin + `/feed`); toast.success("Link copied!"); }}
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full px-3.5 py-2 transition-all duration-200 ml-auto"
           >
             <Share2 className="h-[18px] w-[18px]" />
