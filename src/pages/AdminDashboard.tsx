@@ -351,9 +351,7 @@ function MarketplaceTab() {
             <p className="font-medium">{l.title}</p>
             <p className="text-xs text-muted-foreground">${l.price} · {l.category} · {l.status}</p>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(l.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(l.id)} label="this listing" />
         </div>
       ))}
     </div>
