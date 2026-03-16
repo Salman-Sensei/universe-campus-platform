@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Trash2, Share2, Pencil, MoreHorizontal, Check, X } from "lucide-react";
+import { Heart, MessageCircle, Trash2, Share2, Pencil, MoreHorizontal, Check, X, AlertTriangle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -73,11 +74,20 @@ export function PostCard({
       setLikeAnimating(true);
       setTimeout(() => setLikeAnimating(false), 600);
     }
-    if (!newLiked) {
-      await supabase.from("likes").delete().eq("post_id", id).eq("user_id", user.id);
-    } else {
-      await supabase.from("likes").insert({ post_id: id, user_id: user.id });
-      createNotification(user_id, "like", id);
+    try {
+      if (!newLiked) {
+        const { error } = await supabase.from("likes").delete().eq("post_id", id).eq("user_id", user.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("likes").insert({ post_id: id, user_id: user.id });
+        if (error) throw error;
+        createNotification(user_id, "like", id);
+      }
+    } catch {
+      // Revert optimistic update on failure
+      setLiked(!newLiked);
+      setLikesNum(newLiked ? likesNum : likesNum + 1);
+      toast.error("Failed to update like");
     }
     onRefresh();
   };
@@ -155,7 +165,7 @@ export function PostCard({
                 <AvatarImage src={profiles?.avatar_url || undefined} />
                 <AvatarFallback className="bg-surface text-primary font-semibold text-sm">{initials}</AvatarFallback>
               </Avatar>
-              <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-success border-2 border-card" />
+              
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -179,9 +189,23 @@ export function PostCard({
                 <DropdownMenuItem onClick={() => { setEditingPost(true); setEditPostContent(content); }}>
                   <Pencil className="h-3.5 w-3.5 mr-2" /> Edit Post
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive" onClick={handleDeletePost}>
-                  <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete Post
-                </DropdownMenuItem>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                      <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete Post
+                    </DropdownMenuItem>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                      <AlertDialogDescription>This action cannot be undone. The post and all its comments will be permanently deleted.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeletePost} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
@@ -265,7 +289,7 @@ export function PostCard({
             <span>{comments_count}</span>
           </button>
           <button
-            onClick={() => { navigator.clipboard.writeText(window.location.origin + `/post/${id}`); toast.success("Link copied!"); }}
+            onClick={() => { navigator.clipboard.writeText(window.location.origin + `/feed`); toast.success("Link copied!"); }}
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full px-3.5 py-2 transition-all duration-200 ml-auto"
           >
             <Share2 className="h-[18px] w-[18px]" />
@@ -327,9 +351,23 @@ export function PostCard({
                                 <DropdownMenuItem onClick={() => startEditComment(c)}>
                                   <Pencil className="h-3 w-3 mr-1.5" /> Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteComment(c.id)}>
-                                  <Trash2 className="h-3 w-3 mr-1.5" /> Delete
-                                </DropdownMenuItem>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                                      <Trash2 className="h-3 w-3 mr-1.5" /> Delete
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete this comment?</AlertDialogTitle>
+                                      <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDeleteComment(c.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           )}

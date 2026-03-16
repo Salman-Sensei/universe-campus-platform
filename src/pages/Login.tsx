@@ -12,7 +12,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const [resettingPassword, setResettingPassword] = useState(false);
+  const { signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,6 +62,25 @@ export default function Login() {
           <Button type="submit" disabled={loading} className="w-full gradient-primary text-primary-foreground font-bold rounded-xl h-11">
             {loading ? "Signing in..." : "Sign In"}
           </Button>
+          <button
+            type="button"
+            disabled={resettingPassword}
+            onClick={async () => {
+              if (!email.trim()) { toast.error("Enter your email first"); return; }
+              setResettingPassword(true);
+              try {
+                await resetPassword(email);
+                toast.success("Password reset email sent! Check your inbox.");
+              } catch (err: any) {
+                toast.error(err.message || "Failed to send reset email");
+              } finally {
+                setResettingPassword(false);
+              }
+            }}
+            className="w-full text-xs text-muted-foreground hover:text-primary transition-colors"
+          >
+            {resettingPassword ? "Sending..." : "Forgot your password?"}
+          </button>
         </form>
         <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{" "}

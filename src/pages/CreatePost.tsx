@@ -23,6 +23,7 @@ export default function CreatePost() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (preview) URL.revokeObjectURL(preview);
       setImageFile(file);
       setPreview(URL.createObjectURL(file));
     }
@@ -67,7 +68,7 @@ export default function CreatePost() {
               </div>
               <h2 className="text-xl font-display font-bold text-foreground">Create Post</h2>
             </div>
-            <Link to="/ai">
+            <Link to="/ai-assistant">
               <Button variant="ghost" size="sm" className="text-accent hover:text-accent gap-1.5 rounded-xl">
                 <Sparkles className="h-4 w-4" /> AI Help
               </Button>

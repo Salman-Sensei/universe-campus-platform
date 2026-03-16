@@ -10,11 +10,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Loader2, Trash2, Pencil, UserPlus, Plus, Shield, BookOpen, ShoppingBag, FileText, Calendar, Users as UsersIcon, Ghost, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+
+function ConfirmDeleteButton({ onConfirm, label = "this item" }: { onConfirm: () => void; label?: string }) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button size="sm" variant="ghost" className="text-destructive shrink-0">
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete {label}?</AlertDialogTitle>
+          <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
 
 // --- Users Tab ---
 function UsersTab() {
@@ -244,9 +267,7 @@ function SubjectsTab() {
               <Button size="sm" variant="ghost" onClick={() => { setEditSubject(s); setForm({ name: s.name, code: s.code || "", department: s.department || "", semester: s.semester || "" }); }}>
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(s.id)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              <ConfirmDeleteButton onConfirm={() => handleDelete(s.id)} label="this subject" />
             </div>
           </div>
         ))}
@@ -293,9 +314,7 @@ function PostsTab() {
             <p className="text-xs text-muted-foreground mb-1">@{p.profiles?.username || "unknown"}</p>
             <p className="text-sm truncate">{p.content}</p>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive shrink-0" onClick={() => handleDelete(p.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(p.id)} label="this post" />
         </div>
       ))}
     </div>
@@ -332,9 +351,7 @@ function MarketplaceTab() {
             <p className="font-medium">{l.title}</p>
             <p className="text-xs text-muted-foreground">${l.price} · {l.category} · {l.status}</p>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(l.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(l.id)} label="this listing" />
         </div>
       ))}
     </div>
@@ -368,9 +385,7 @@ function ConfessionsTab() {
       {confessions.map((c) => (
         <div key={c.id} className="flex items-start justify-between p-3 rounded-xl border border-border/40 bg-card">
           <p className="text-sm flex-1 min-w-0 truncate">{c.content}</p>
-          <Button size="sm" variant="ghost" className="text-destructive shrink-0" onClick={() => handleDelete(c.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(c.id)} label="this confession" />
         </div>
       ))}
     </div>
@@ -444,9 +459,7 @@ function EventsTab() {
             <p className="font-medium">{e.title}</p>
             <p className="text-xs text-muted-foreground">{new Date(e.event_date).toLocaleString()} · {e.category} · {e.location || "TBD"}</p>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(e.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(e.id)} label="this event" />
         </div>
       ))}
     </div>
@@ -512,9 +525,7 @@ function CommunitiesTab() {
               <p className="text-xs text-muted-foreground">{c.description || "No description"}</p>
             </div>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(c.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(c.id)} label="this community" />
         </div>
       ))}
     </div>
@@ -551,9 +562,7 @@ function NotesTab() {
             <p className="font-medium">{n.title}</p>
             <p className="text-xs text-muted-foreground">{n.subject} · {n.category} · {n.downloads} downloads</p>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(n.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(n.id)} label="this note" />
         </div>
       ))}
     </div>

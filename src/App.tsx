@@ -24,6 +24,7 @@ import Marketplace from "./pages/Marketplace";
 import StudyPartner from "./pages/StudyPartner";
 import NotesResources from "./pages/NotesResources";
 import AdminDashboard from "./pages/AdminDashboard";
+import AIAssistant from "./pages/AIAssistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -77,6 +78,7 @@ function AppRoutes() {
       <Route path="/study-partner" element={<OnboardingGuard><StudyPartner /></OnboardingGuard>} />
       <Route path="/notes" element={<OnboardingGuard><NotesResources /></OnboardingGuard>} />
       <Route path="/admin" element={<OnboardingGuard><AdminDashboard /></OnboardingGuard>} />
+      <Route path="/ai-assistant" element={<OnboardingGuard><AIAssistant /></OnboardingGuard>} />
       <Route path="/user/:username" element={<OnboardingGuard><UserProfile /></OnboardingGuard>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
