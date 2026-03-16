@@ -562,9 +562,7 @@ function NotesTab() {
             <p className="font-medium">{n.title}</p>
             <p className="text-xs text-muted-foreground">{n.subject} · {n.category} · {n.downloads} downloads</p>
           </div>
-          <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(n.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <ConfirmDeleteButton onConfirm={() => handleDelete(n.id)} label="this note" />
         </div>
       ))}
     </div>
