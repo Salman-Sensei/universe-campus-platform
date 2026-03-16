@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Trash2, Share2, Pencil, MoreHorizontal, Check, X } from "lucide-react";
+import { Heart, MessageCircle, Trash2, Share2, Pencil, MoreHorizontal, Check, X, AlertTriangle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
