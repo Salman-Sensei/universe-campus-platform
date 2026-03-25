@@ -25,6 +25,7 @@ import StudyPartner from "./pages/StudyPartner";
 import NotesResources from "./pages/NotesResources";
 import AdminDashboard from "./pages/AdminDashboard";
 import AIAssistant from "./pages/AIAssistant";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -79,6 +80,7 @@ function AppRoutes() {
       <Route path="/notes" element={<OnboardingGuard><NotesResources /></OnboardingGuard>} />
       <Route path="/admin" element={<OnboardingGuard><AdminDashboard /></OnboardingGuard>} />
       <Route path="/ai-assistant" element={<OnboardingGuard><AIAssistant /></OnboardingGuard>} />
+      <Route path="/messages" element={<OnboardingGuard><Messages /></OnboardingGuard>} />
       <Route path="/user/:username" element={<OnboardingGuard><UserProfile /></OnboardingGuard>} />
       <Route path="*" element={<NotFound />} />
     </Routes>

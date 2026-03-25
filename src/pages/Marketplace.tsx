@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -30,6 +31,7 @@ function getCategoryIcon(cat: string) {
 
 export default function Marketplace() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [filterCategory, setFilterCategory] = useState("all");
@@ -271,7 +273,18 @@ export default function Marketplace() {
                               {listing.seller?.display_name || listing.seller?.username || "Unknown"}
                             </span>
                           </div>
-                          <Button variant="ghost" size="sm" className="rounded-full text-xs gap-1 text-primary hover:bg-primary/10">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="rounded-full text-xs gap-1 text-primary hover:bg-primary/10"
+                            onClick={() => {
+                              if (listing.user_id === user?.id) {
+                                toast.error("You can't chat with yourself!");
+                              } else {
+                                navigate(`/messages?userId=${listing.user_id}`);
+                              }
+                            }}
+                          >
                             <MessageCircle className="h-3.5 w-3.5" /> Chat
                           </Button>
                         </div>
