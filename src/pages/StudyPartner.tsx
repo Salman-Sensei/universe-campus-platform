@@ -37,7 +37,6 @@ export default function StudyPartner() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [filterSubject, setFilterSubject] = useState("all");
 
   // Form
