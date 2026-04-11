@@ -27,17 +27,54 @@ export function usePosts(userId?: string) {
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
-    let query = supabase
-      .from("posts")
-      .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url, role, founder_badge)")
-      .order("created_at", { ascending: false });
 
+    // If viewing a specific user's posts, fetch directly
     if (userId) {
-      query = query.eq("user_id", userId);
+      const query = supabase
+        .from("posts")
+        .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url, role, founder_badge)")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      const { data: postsData } = await query;
+      if (!postsData) { setLoading(false); return; }
+      await enrichAndSet(postsData);
+      return;
     }
 
-    const { data: postsData } = await query;
-    if (!postsData) { setLoading(false); return; }
+    // For feed: fetch posts from followed users + own posts
+    if (user) {
+      const { data: follows } = await supabase
+        .from("follows")
+        .select("following_id")
+        .eq("follower_id", user.id);
+
+      const followedIds = (follows || []).map((f) => f.following_id);
+      // Include own posts + followed users' posts
+      const allIds = [...new Set([user.id, ...followedIds])];
+
+      const { data: postsData } = await supabase
+        .from("posts")
+        .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url, role, founder_badge)")
+        .in("user_id", allIds)
+        .order("created_at", { ascending: false });
+
+      if (!postsData) { setLoading(false); return; }
+      await enrichAndSet(postsData);
+    } else {
+      // Not logged in: show all posts
+      const { data: postsData } = await supabase
+        .from("posts")
+        .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url, role, founder_badge)")
+        .order("created_at", { ascending: false });
+
+      if (!postsData) { setLoading(false); return; }
+      await enrichAndSet(postsData);
+    }
+  }, [user, userId]);
+
+  const enrichAndSet = async (postsData: any[]) => {
+    if (postsData.length === 0) { setPosts([]); setLoading(false); return; }
 
     const postIds = postsData.map((p) => p.id);
 
@@ -67,7 +104,7 @@ export function usePosts(userId?: string) {
 
     setPosts(enriched);
     setLoading(false);
-  }, [user, userId]);
+  };
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 

@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Users, Clock, BookOpen, GraduationCap, UserPlus, UserCheck, MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const SUBJECTS = [
   "Operating Systems", "Data Structures", "Database Systems", "Web Engineering",
