@@ -34,7 +34,9 @@ const TIME_SLOTS = [
 
 export default function StudyPartner() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [filterSubject, setFilterSubject] = useState("all");
 
@@ -328,7 +330,15 @@ export default function StudyPartner() {
                             ) : (
                               <Badge variant="secondary" className="rounded-full text-xs">Full</Badge>
                             )}
-                            <Button variant="ghost" size="sm" className="rounded-full text-xs gap-1 text-primary hover:bg-primary/10">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="rounded-full text-xs gap-1 text-primary hover:bg-primary/10"
+                              onClick={() => {
+                                if (!user) return toast.error("Sign in to message");
+                                navigate(`/messages?userId=${req.user_id}`);
+                              }}
+                            >
                               <MessageCircle className="h-3.5 w-3.5" /> Message
                             </Button>
                           </div>
