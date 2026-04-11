@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +9,8 @@ import { RoleBadge } from "@/components/RoleBadge";
 import { FounderBadge } from "@/components/FounderBadge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserPlus, UserMinus, Music, Quote, Tag, Loader2, GraduationCap, BookOpen } from "lucide-react";
+import { UserPlus, UserMinus, Music, Quote, Tag, Loader2, GraduationCap, BookOpen, MessageCircle } from "lucide-react";
+
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -18,6 +19,7 @@ import type { Tables } from "@/integrations/supabase/types";
 export default function UserProfile() {
   const { username } = useParams<{ username: string }>();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -102,14 +104,24 @@ export default function UserProfile() {
                 <AvatarFallback className="bg-muted text-primary text-3xl font-bold">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               {!isOwnProfile && user && (
-                <Button
-                  onClick={toggleFollow}
-                  variant={isFollowing ? "outline" : "default"}
-                  size="sm"
-                  className={`rounded-full font-semibold px-5 mt-16 ${!isFollowing ? "gradient-primary text-primary-foreground" : ""}`}
-                >
-                  {isFollowing ? <><UserMinus className="mr-1.5 h-4 w-4" /> Unfollow</> : <><UserPlus className="mr-1.5 h-4 w-4" /> Follow</>}
-                </Button>
+                <div className="flex gap-2 mt-16">
+                  <Button
+                    onClick={toggleFollow}
+                    variant={isFollowing ? "outline" : "default"}
+                    size="sm"
+                    className={`rounded-full font-semibold px-5 ${!isFollowing ? "gradient-primary text-primary-foreground" : ""}`}
+                  >
+                    {isFollowing ? <><UserMinus className="mr-1.5 h-4 w-4" /> Unfollow</> : <><UserPlus className="mr-1.5 h-4 w-4" /> Follow</>}
+                  </Button>
+                  <Button
+                    onClick={() => navigate(`/messages?userId=${profile.user_id}`)}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full font-semibold px-5"
+                  >
+                    <MessageCircle className="mr-1.5 h-4 w-4" /> Message
+                  </Button>
+                </div>
               )}
             </div>
 

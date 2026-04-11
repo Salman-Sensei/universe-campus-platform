@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Crown, UserPlus, UserCheck } from "lucide-react";
+import { Crown, UserPlus, UserCheck, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -20,6 +20,7 @@ interface PopularUser {
 
 export function PopularUsers() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [users, setUsers] = useState<PopularUser[]>([]);
   const [followingSet, setFollowingSet] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -127,16 +128,26 @@ export function PopularUsers() {
                 </div>
               </Link>
               {user && (
-                <Button
-                  onClick={() => toggleFollow(u.user_id)}
-                  variant="ghost"
-                  size="icon"
-                  className={`h-8 w-8 rounded-full shrink-0 ${
-                    isFollowing ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/10"
-                  }`}
-                >
-                  {isFollowing ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
-                </Button>
+                <div className="flex gap-1 shrink-0">
+                  <Button
+                    onClick={() => navigate(`/messages?userId=${u.user_id}`)}
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    onClick={() => toggleFollow(u.user_id)}
+                    variant="ghost"
+                    size="icon"
+                    className={`h-8 w-8 rounded-full shrink-0 ${
+                      isFollowing ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                    }`}
+                  >
+                    {isFollowing ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
+                  </Button>
+                </div>
               )}
             </motion.div>
           );
