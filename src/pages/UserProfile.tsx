@@ -104,14 +104,24 @@ export default function UserProfile() {
                 <AvatarFallback className="bg-muted text-primary text-3xl font-bold">{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               {!isOwnProfile && user && (
-                <Button
-                  onClick={toggleFollow}
-                  variant={isFollowing ? "outline" : "default"}
-                  size="sm"
-                  className={`rounded-full font-semibold px-5 mt-16 ${!isFollowing ? "gradient-primary text-primary-foreground" : ""}`}
-                >
-                  {isFollowing ? <><UserMinus className="mr-1.5 h-4 w-4" /> Unfollow</> : <><UserPlus className="mr-1.5 h-4 w-4" /> Follow</>}
-                </Button>
+                <div className="flex gap-2 mt-16">
+                  <Button
+                    onClick={toggleFollow}
+                    variant={isFollowing ? "outline" : "default"}
+                    size="sm"
+                    className={`rounded-full font-semibold px-5 ${!isFollowing ? "gradient-primary text-primary-foreground" : ""}`}
+                  >
+                    {isFollowing ? <><UserMinus className="mr-1.5 h-4 w-4" /> Unfollow</> : <><UserPlus className="mr-1.5 h-4 w-4" /> Follow</>}
+                  </Button>
+                  <Button
+                    onClick={() => navigate(`/messages?userId=${profile.user_id}`)}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full font-semibold px-5"
+                  >
+                    <MessageCircle className="mr-1.5 h-4 w-4" /> Message
+                  </Button>
+                </div>
               )}
             </div>
 
