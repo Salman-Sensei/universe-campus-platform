@@ -20,6 +20,7 @@ interface PopularUser {
 
 export function PopularUsers() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [users, setUsers] = useState<PopularUser[]>([]);
   const [followingSet, setFollowingSet] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
