@@ -185,19 +185,15 @@ export default function Onboarding() {
       avatarUrl = data.publicUrl;
     }
 
-    const updateData: Record<string, any> = {
+    const updateData: TablesUpdate<"profiles"> = {
       username: username.toLowerCase(),
       display_name: username,
       avatar_url: avatarUrl || null,
       role,
       onboarding_completed: true,
+      ...(role === "student" ? { semester: semester || null, batch: batch || null } : {}),
+      ...(role === "faculty" ? { subjects: subjects ? subjects.split(",").map(s => s.trim()).filter(Boolean) : null } : {}),
     };
-    if (role === "student") {
-      updateData.semester = semester || null;
-      updateData.batch = batch || null;
-    } else if (role === "faculty") {
-      updateData.subjects = subjects ? subjects.split(",").map(s => s.trim()).filter(Boolean) : null;
-    }
 
     const { error } = await supabase.from("profiles").update(updateData).eq("user_id", user.id);
     if (error) {
