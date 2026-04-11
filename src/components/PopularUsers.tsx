@@ -128,16 +128,26 @@ export function PopularUsers() {
                 </div>
               </Link>
               {user && (
-                <Button
-                  onClick={() => toggleFollow(u.user_id)}
-                  variant="ghost"
-                  size="icon"
-                  className={`h-8 w-8 rounded-full shrink-0 ${
-                    isFollowing ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/10"
-                  }`}
-                >
-                  {isFollowing ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
-                </Button>
+                <div className="flex gap-1 shrink-0">
+                  <Button
+                    onClick={() => navigate(`/messages?userId=${u.user_id}`)}
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    onClick={() => toggleFollow(u.user_id)}
+                    variant="ghost"
+                    size="icon"
+                    className={`h-8 w-8 rounded-full shrink-0 ${
+                      isFollowing ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                    }`}
+                  >
+                    {isFollowing ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
+                  </Button>
+                </div>
               )}
             </motion.div>
           );
