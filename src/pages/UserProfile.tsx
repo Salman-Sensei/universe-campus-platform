@@ -10,7 +10,7 @@ import { FounderBadge } from "@/components/FounderBadge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserPlus, UserMinus, Music, Quote, Tag, Loader2, GraduationCap, BookOpen, MessageCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+
 import { useNotificationsContext } from "@/contexts/NotificationsContext";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
