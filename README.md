@@ -90,45 +90,92 @@ Students discover study partners, faculty share knowledge, communities grow, and
 
 # 🖼 Platform Screenshots
 
-*(Replace images with real screenshots)*
 
-## Home Feed
+# 🚀 User Setup Flow
+
+## Step 1 • After Login/Sign up Making Sure Name is Available
 
 <p align="center">
-<img src="screenshots/home.png" width="900">
+<img src="./screenshots/Set_up_ur_profile_1.png" width="900">
 </p>
 
 ---
 
-## Stories System
+## Step 2 • Profile Pic 
 
 <p align="center">
-<img src="screenshots/stories.png" width="900">
+<img src="./screenshots/Set_up_ur_profile_2.png" width="900">
 </p>
 
 ---
 
-## Notes Hub
+## Step 3 • Academic Preferences
 
 <p align="center">
-<img src="screenshots/notes.png" width="900">
+<img src="./screenshots/Set_up_ur_profile_3.png" width="900">
+</p>
+
+---
+## 🏠 Home Feed
+
+<p align="center">
+<img src="./screenshots/Home_Feed.png" width="900">
+</p>
+
+<p align="center">
+Main personalized social feed where students can interact, post updates, react, and engage with campus communities.
 </p>
 
 ---
 
-## Marketplace
+## 📚 Notes Hub
 
 <p align="center">
-<img src="screenshots/marketplace.png" width="900">
+<img src="./screenshots/Notes_Hub.png" width="900">
+</p>
+
+<p align="center">
+Collaborative academic resource sharing system for uploading and accessing lecture notes and study material.
 </p>
 
 ---
 
-## Study Partner Finder
+## 🛒 Marketplace
 
 <p align="center">
-<img src="screenshots/study-partner.png" width="900">
+<img src="./screenshots/Marketplace.png" width="900">
 </p>
+
+<p align="center">
+Campus marketplace for buying and selling textbooks, gadgets, and student essentials.
+</p>
+
+---
+
+## 🤝 Study Partner Finder
+
+<p align="center">
+<img src="./screenshots/Study_Partner_Finder.png" width="900">
+</p>
+
+<p align="center">
+AI-assisted feature to help students discover compatible study partners based on subjects and interests.
+</p>
+
+---
+
+## 👤 Profile Page
+
+<p align="center">
+<img src="./screenshots/Profile_page.png" width="900">
+</p>
+
+<p align="center">
+Interactive student profile showcasing academic interests, achievements, and social activity.
+</p>
+
+---
+
 
 ---
 
