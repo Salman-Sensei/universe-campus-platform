@@ -33,7 +33,7 @@ const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="theme-landing-blue min-h-screen bg-background text-foreground overflow-hidden">
       {/* Nav */}
       <nav className="fixed top-0 w-full z-50 glass-strong border-b border-border/30">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3.5">
