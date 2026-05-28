@@ -254,6 +254,44 @@
   }
 }
 
+/* ─── Landing page scope: high-contrast blue (60/30/10) ───
+   60% dominant background — deep navy
+   30% secondary surfaces  — slate blue
+   10% accent / CTA        — electric blue
+*/
+.theme-landing-blue {
+  --background: 222 47% 8%;          /* 60% — deep navy */
+  --foreground: 210 40% 98%;         /* near-white text, AAA contrast */
+
+  --card: 222 40% 12%;               /* 30% — secondary surface */
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222 40% 12%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 214 100% 56%;           /* 10% — electric blue CTA */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 222 35% 16%;
+  --secondary-foreground: 210 30% 92%;
+
+  --muted: 222 30% 14%;
+  --muted-foreground: 215 25% 72%;   /* boosted for readability */
+
+  --accent: 199 95% 60%;             /* sky/cyan accent (same blue family) */
+  --accent-foreground: 222 47% 8%;
+
+  --border: 222 30% 20%;
+  --input: 222 30% 18%;
+  --ring: 214 100% 56%;
+
+  --glow: 214 100% 56%;
+  --glow-secondary: 199 95% 60%;
+  --surface: 222 38% 13%;
+  --surface-hover: 222 38% 17%;
+  --surface-active: 222 38% 21%;
+}
+
 @layer base {
   * {
     @apply border-border;
