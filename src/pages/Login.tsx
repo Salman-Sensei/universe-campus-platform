@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { ArrowLeft, GraduationCap } from "lucide-react";
+import { getAuthErrorMessage } from "@/lib/auth-errors";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,8 +23,8 @@ export default function Login() {
     try {
       await signIn(email, password);
       navigate("/feed");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to sign in");
+    } catch (error: unknown) {
+      toast.error(getAuthErrorMessage(error, "Failed to sign in"));
     } finally {
       setLoading(false);
     }
@@ -62,8 +63,9 @@ export default function Login() {
           <Button type="submit" disabled={loading} className="w-full gradient-primary text-primary-foreground font-bold rounded-xl h-11">
             {loading ? "Signing in..." : "Sign In"}
           </Button>
-          <button
+          <Button
             type="button"
+            variant="link"
             disabled={resettingPassword}
             onClick={async () => {
               if (!email.trim()) { toast.error("Enter your email first"); return; }
@@ -71,16 +73,16 @@ export default function Login() {
               try {
                 await resetPassword(email);
                 toast.success("Password reset email sent! Check your inbox.");
-              } catch (err: any) {
-                toast.error(err.message || "Failed to send reset email");
+              } catch (error: unknown) {
+                toast.error(getAuthErrorMessage(error, "Failed to send reset email"));
               } finally {
                 setResettingPassword(false);
               }
             }}
-            className="w-full text-xs text-muted-foreground hover:text-primary transition-colors"
+            className="w-full h-auto p-0 text-xs text-muted-foreground hover:text-primary"
           >
             {resettingPassword ? "Sending..." : "Forgot your password?"}
-          </button>
+          </Button>
         </form>
         <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{" "}

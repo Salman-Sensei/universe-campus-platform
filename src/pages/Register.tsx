@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { ArrowLeft, GraduationCap } from "lucide-react";
+import { getAuthErrorMessage } from "@/lib/auth-errors";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -24,8 +25,8 @@ export default function Register() {
       await signUp(email, password, username);
       toast.success("Account created! Please check your email to verify.");
       navigate("/login");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to sign up");
+    } catch (error: unknown) {
+      toast.error(getAuthErrorMessage(error, "Failed to sign up"));
     } finally {
       setLoading(false);
     }
