@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { ArrowLeft, GraduationCap } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { BrandMark } from "@/components/BrandMark";
 import { getAuthErrorMessage } from "@/lib/auth-errors";
 
 export default function Register() {
@@ -33,40 +34,37 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center gradient-mesh px-4 relative">
+    <div className="auth-shell min-h-screen flex items-center justify-center px-4 relative">
       <Link to="/" className="absolute top-6 left-6 text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 text-sm">
         <ArrowLeft className="h-4 w-4" /> Back
       </Link>
       <motion.div
-        initial={{ opacity: 0, y: 20, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full max-w-sm glass rounded-3xl p-8 space-y-6 noise"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 space-y-6"
       >
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center gap-2 mb-2">
-            <div className="w-7 h-7 rounded-lg gradient-primary flex items-center justify-center">
-              <GraduationCap className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-lg gradient-text">UniVerse</span>
+          <Link to="/" className="inline-flex justify-center mb-2">
+            <BrandMark />
           </Link>
           <h1 className="text-2xl font-display font-bold text-foreground">Join UniVerse</h1>
           <p className="text-muted-foreground text-sm">Create your academic profile</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="username" className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Username</Label>
-            <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} required className="bg-surface/60 border-border/40 rounded-xl h-11 focus:ring-1 focus:ring-primary/30" placeholder="johndoe" />
+            <Label htmlFor="username" className="text-xs font-medium text-muted-foreground">Username</Label>
+            <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} required className="h-11 rounded-lg" placeholder="johndoe" />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-xs font-medium text-muted-foreground uppercase tracking-wider">University Email</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-surface/60 border-border/40 rounded-xl h-11 focus:ring-1 focus:ring-primary/30" placeholder="you@university.edu" />
+            <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">University Email</Label>
+            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-11 rounded-lg" placeholder="you@university.edu" />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Password</Label>
-            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-surface/60 border-border/40 rounded-xl h-11 focus:ring-1 focus:ring-primary/30" placeholder="••••••••" />
+            <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">Password</Label>
+            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-11 rounded-lg" placeholder="At least 6 characters" />
           </div>
-          <Button type="submit" disabled={loading} className="w-full gradient-primary text-primary-foreground font-bold rounded-xl h-11">
+          <Button type="submit" disabled={loading} className="w-full rounded-lg h-11 font-semibold">
             {loading ? "Creating account..." : "Create Account"}
           </Button>
         </form>
