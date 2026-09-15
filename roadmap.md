@@ -6,3 +6,4 @@
 - [x] Standardize pages, navigation, forms, buttons, loading, and empty states.
 - [x] Remove stray emojis and long dashes from interface copy.
 - [x] Verify representative desktop and mobile pages.
+- [x] Replace fabricated testimonials with honest campus use cases and remove uneven landing-page glow.
