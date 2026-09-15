@@ -233,7 +233,7 @@ export default function Messages() {
                   ) : messages.length === 0 ? (
                     <div className="text-center py-12">
                       <MessageCircle className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No messages yet. Say hi! 👋</p>
+                      <p className="text-sm text-muted-foreground">No messages yet. Say hello.</p>
                     </div>
                   ) : (
                     messages.map((msg: any) => {

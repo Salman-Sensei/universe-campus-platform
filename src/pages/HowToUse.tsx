@@ -9,7 +9,7 @@ const features = [
   { icon: MessageCircle, title: "Posts & Comments", desc: "Create text and image posts. Comment on others' posts to start academic discussions and campus conversations." },
   { icon: UserPlus, title: "Followers", desc: "Follow classmates and faculty to build your academic network. See their posts in your feed." },
   { icon: Users, title: "Communities", desc: "Join department-based communities like Software Engineering, AI, and Data Science to connect with peers." },
-  { icon: Flame, title: "Events", desc: "Discover campus events — hackathons, seminars, study groups, and project meetings. RSVP and never miss out." },
+  { icon: Flame, title: "Events", desc: "Discover campus events such as hackathons, seminars, study groups, and project meetings. RSVP and never miss out." },
   { icon: GraduationCap, title: "Study Partner Finder", desc: "Find study partners by subject, semester, and availability. Join study sessions and ace your exams together." },
   { icon: FileText, title: "Notes Hub", desc: "Upload and download lecture notes, past papers, assignments, and study guides. Search by course and semester." },
   { icon: ShoppingBag, title: "Marketplace", desc: "Buy and sell textbooks, electronics, calculators, and more. List items with photos and prices." },
@@ -59,7 +59,7 @@ export default function HowToUse() {
           </div>
           <p className="text-foreground/80 leading-relaxed">
             UniVerse brings your entire university experience online. Whether you're looking for study partners, 
-            sharing lecture notes, buying textbooks, or simply staying connected with campus life — UniVerse is your 
+            sharing lecture notes, buying textbooks, or simply staying connected with campus life, UniVerse is your 
             all-in-one platform. Built for students, by students.
           </p>
         </motion.section>
@@ -119,7 +119,7 @@ export default function HowToUse() {
 
         {/* Platform Purpose */}
         <motion.section {...fadeUp} transition={{ delay: 0.4 }} className="glass-card rounded-2xl p-6 md:p-8 mb-8 hover:translate-y-0 border-primary/20">
-          <h2 className="text-xl font-display font-bold text-foreground mb-3">🎯 Platform Purpose</h2>
+          <h2 className="text-xl font-display font-bold text-foreground mb-3">Platform Purpose</h2>
           <p className="text-foreground/80 leading-relaxed">
             UniVerse is designed for <strong className="text-foreground">academic collaboration</strong> and <strong className="text-foreground">campus interaction</strong>. 
             It bridges the gap between classroom learning and digital networking, creating a space where every student and faculty member 

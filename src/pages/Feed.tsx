@@ -30,7 +30,7 @@ export default function Feed() {
             <div className="flex-1">
               <Link to="/create">
                 <div className="bg-surface/50 rounded-xl px-4 py-3 text-sm text-muted-foreground hover:bg-surface-hover hover:text-foreground transition-all duration-200 cursor-pointer border border-border/20">
-                  ✨ Share an update with your community...
+                  Share an update with your community...
                 </div>
               </Link>
             </div>
@@ -50,7 +50,7 @@ export default function Feed() {
           >
             <span className="flex items-center gap-1.5 text-xs font-medium text-warning bg-warning/10 px-3 py-1.5 rounded-full">
               <Flame className="h-3 w-3" />
-              🔥 Trending in Computer Science
+              Trending in Computer Science
             </span>
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-surface/40 px-3 py-1.5 rounded-full">
               <Zap className="h-3 w-3 text-primary" />

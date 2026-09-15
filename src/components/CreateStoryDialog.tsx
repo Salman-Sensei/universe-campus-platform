@@ -89,7 +89,7 @@ export function CreateStoryDialog({ open, onOpenChange, onCreated }: Props) {
 
         {mode === "text" ? (
           <Textarea
-            placeholder="What's on your mind? ✨"
+            placeholder="What's on your mind?"
             value={content}
             onChange={e => setContent(e.target.value)}
             className="bg-surface/50 border-border/20 rounded-xl min-h-[120px]"
