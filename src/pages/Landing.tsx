@@ -15,7 +15,6 @@ import {
   UserPlus,
   Compass,
   Rocket,
-  Star,
   CheckCircle2,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -86,7 +85,7 @@ export default function Landing() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-8"
           >
-            <span className="h-2 w-2 rounded-full gradient-primary animate-pulse-glow" />
+            <span className="h-2 w-2 rounded-full bg-primary" />
             <span className="text-sm text-muted-foreground font-medium">Built for BUKC students & faculty</span>
           </motion.div>
 
@@ -107,7 +106,7 @@ export default function Landing() {
             transition={{ delay: 0.25, duration: 0.7 }}
             className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed text-balance"
           >
-            One place to share, study, swap notes, find partners, post confessions, and grow together — all built for university life.
+            One place to share, study, swap notes, find partners, post confessions, and grow together. Built for university life.
           </motion.p>
 
           <motion.div
@@ -117,9 +116,9 @@ export default function Landing() {
             className="flex flex-col sm:flex-row gap-3 justify-center"
           >
             <Link to="/register">
-              <Button size="lg" className="gradient-primary text-primary-foreground font-bold text-base px-8 h-12 rounded-full glow-border group w-full sm:w-auto">
+              <Button size="lg" className="bg-primary text-primary-foreground font-bold text-base px-8 h-12 rounded-full group w-full sm:w-auto">
                 <Rocket className="mr-2 h-4 w-4 group-hover:animate-float" />
-                Join UniVerse — Free
+                 Join UniVerse free
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
@@ -197,8 +196,6 @@ export default function Landing() {
               whileHover={{ y: -3 }}
               className="md:col-span-4 md:row-span-2 glass rounded-3xl p-8 relative overflow-hidden group cursor-default"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-accent/10 opacity-80 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full bg-primary/20 blur-3xl" />
               <div className="relative z-10 h-full flex flex-col justify-between">
                 <div>
                   <div className="w-12 h-12 rounded-2xl gradient-primary flex items-center justify-center mb-5">
@@ -208,7 +205,7 @@ export default function Landing() {
                     AI-powered academic feed
                   </h4>
                   <p className="text-muted-foreground text-sm md:text-base max-w-md leading-relaxed">
-                    Smart ranking surfaces what matters from your followed peers, faculty, and subjects — never noise.
+                     Smart ranking surfaces what matters from your followed peers, faculty, and subjects without the noise.
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-primary text-sm font-semibold">
@@ -224,7 +221,6 @@ export default function Landing() {
               whileHover={{ y: -3 }}
               className="md:col-span-2 md:row-span-2 glass rounded-3xl p-7 relative overflow-hidden group cursor-default"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/15 to-transparent opacity-80" />
               <div className="relative z-10 h-full flex flex-col justify-between">
                 <div className="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center">
                   <Bot className="h-5 w-5 text-primary-foreground" />
@@ -232,7 +228,7 @@ export default function Landing() {
                 <div>
                   <h4 className="font-display font-bold text-xl text-foreground mb-2">AI Assistant</h4>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Ask anything — from concepts to deadlines. Your study buddy is always online.
+                     Ask about concepts, coursework, or deadlines. Get a clear answer when you need one.
                   </p>
                 </div>
               </div>
@@ -254,7 +250,6 @@ export default function Landing() {
                 whileHover={{ y: -3 }}
                 className="md:col-span-2 glass rounded-3xl p-6 relative overflow-hidden group cursor-default"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative z-10 flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:gradient-primary transition-all">
                     <f.icon className="h-4.5 w-4.5 text-primary group-hover:text-primary-foreground transition-colors" />
@@ -336,7 +331,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Testimonials */}
+       {/* Campus use cases */}
       <section className="relative py-28 px-6 border-t border-border/30">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -347,10 +342,10 @@ export default function Landing() {
             className="text-center mb-14"
           >
             <motion.p variants={fadeUp} custom={0} className="text-primary font-semibold text-xs uppercase tracking-widest mb-3">
-              Loved on campus
+               Made for campus life
             </motion.p>
             <motion.h3 variants={fadeUp} custom={1} className="text-3xl md:text-5xl font-display font-bold text-foreground text-balance">
-              The campus voice, <span className="gradient-text">unfiltered</span>
+               Useful from your first class to finals
             </motion.h3>
           </motion.div>
 
@@ -361,44 +356,36 @@ export default function Landing() {
             variants={stagger}
             className="grid md:grid-cols-3 gap-5"
           >
-            {[
+             {[
               {
-                quote: "Found my entire study group on UniVerse in week one. Best decision of the semester.",
-                name: "Ayesha K.",
-                role: "BSCS, Semester 5",
+                 icon: Users,
+                 title: "Find your people",
+                 description: "Connect with classmates who share your subjects, schedule, and academic goals.",
               },
               {
-                quote: "The notes section is a literal lifesaver. Pre-exam week feels less terrifying now.",
-                name: "Hamza R.",
-                role: "BSSE, Semester 7",
+                 icon: FileText,
+                 title: "Keep learning close",
+                 description: "Share useful notes and find the resources your course community recommends.",
               },
               {
-                quote: "Finally a campus app that doesn't feel like a 2010 forum. Clean, fast, and actually fun.",
-                name: "Zara M.",
-                role: "BBA, Semester 3",
+                 icon: MessageSquare,
+                 title: "Stay in the conversation",
+                 description: "Move naturally from a useful post to a private conversation with a peer.",
               },
             ].map((t, i) => (
               <motion.div
-                key={t.name}
+                 key={t.title}
                 variants={fadeUp}
                 custom={i}
-                className="glass rounded-2xl p-7 flex flex-col gap-4"
+                 className="glass rounded-2xl p-7 flex flex-col gap-5"
               >
-                <div className="flex gap-0.5 text-primary">
-                  {Array.from({ length: 5 }).map((_, idx) => (
-                    <Star key={idx} className="h-4 w-4 fill-current" />
-                  ))}
+                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                   <t.icon className="h-5 w-5 text-primary" />
                 </div>
-                <p className="text-foreground/90 leading-relaxed flex-1">"{t.quote}"</p>
-                <div className="flex items-center gap-3 pt-2 border-t border-border/30">
-                  <div className="w-9 h-9 rounded-full gradient-primary flex items-center justify-center text-primary-foreground font-display font-bold text-sm">
-                    {t.name[0]}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-sm text-foreground">{t.name}</p>
-                    <p className="text-xs text-muted-foreground">{t.role}</p>
-                  </div>
-                </div>
+                 <div>
+                   <h4 className="font-display font-semibold text-lg text-foreground">{t.title}</h4>
+                   <p className="text-muted-foreground text-sm leading-relaxed mt-2">{t.description}</p>
+                 </div>
               </motion.div>
             ))}
           </motion.div>
@@ -415,11 +402,8 @@ export default function Landing() {
             transition={{ duration: 0.7 }}
             className="glass rounded-[2rem] p-12 md:p-16 relative overflow-hidden noise text-center"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
-            <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-primary/20 blur-3xl" />
-            <div className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-accent/20 blur-3xl" />
             <div className="relative z-10">
-              <BookOpen className="h-10 w-10 text-primary mx-auto mb-5 animate-pulse-glow" />
+               <BookOpen className="h-10 w-10 text-primary mx-auto mb-5" />
               <h3 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4 text-balance tracking-tight">
                 Your campus is waiting.
               </h3>
@@ -428,7 +412,7 @@ export default function Landing() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to="/register">
-                  <Button size="lg" className="gradient-primary text-primary-foreground font-bold rounded-full px-10 h-12 glow-border w-full sm:w-auto">
+                   <Button size="lg" className="bg-primary text-primary-foreground font-bold rounded-full px-10 h-12 w-full sm:w-auto">
                     Create free account
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
