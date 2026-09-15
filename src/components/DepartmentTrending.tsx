@@ -42,7 +42,7 @@ export function DepartmentTrending() {
           >
             <div className="flex items-center gap-1.5 mb-1">
               <span className="text-[10px] font-medium text-primary/70">
-                🔥 Trending in {item.dept}
+                Trending in {item.dept}
               </span>
             </div>
             <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">

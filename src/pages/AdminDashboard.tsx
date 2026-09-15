@@ -132,7 +132,7 @@ function UsersTab() {
                     <span className="font-medium">{u.display_name || "Unnamed"}</span>
                   </div>
                 </td>
-                <td className="p-3 text-muted-foreground">@{u.username || "—"}</td>
+                <td className="p-3 text-muted-foreground">@{u.username || "not set"}</td>
                 <td className="p-3">
                   <Badge variant="outline" className="capitalize">{u.role || "student"}</Badge>
                 </td>

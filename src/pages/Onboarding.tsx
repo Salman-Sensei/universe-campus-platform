@@ -203,7 +203,7 @@ export default function Onboarding() {
       return;
     }
 
-    toast.success("Welcome to UniVerse! 🎓");
+    toast.success("Welcome to UniVerse");
     navigate("/feed");
     setSaving(false);
   };
@@ -311,7 +311,7 @@ export default function Onboarding() {
               </div>
               <label className="block cursor-pointer text-center">
                 <div className="bg-surface/60 rounded-xl px-4 py-3 text-sm text-muted-foreground hover:bg-surface-hover transition-colors border border-dashed border-border/60">
-                  📷 Upload custom photo
+                  Upload custom photo
                 </div>
                 <input type="file" accept="image/*" onChange={handleCustomAvatar} className="hidden" />
               </label>

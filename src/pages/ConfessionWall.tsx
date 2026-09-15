@@ -215,7 +215,7 @@ export default function ConfessionWall() {
           className="glass-card rounded-2xl p-5 hover:translate-y-0"
         >
           <Textarea
-            placeholder="Share your confession anonymously... 🤫"
+            placeholder="Share your confession anonymously..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="bg-surface/50 border-border/20 rounded-xl resize-none min-h-[100px] text-sm"
