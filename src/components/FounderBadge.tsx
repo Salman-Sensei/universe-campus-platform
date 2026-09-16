@@ -20,7 +20,7 @@ export const FounderBadge = React.forwardRef<HTMLSpanElement, FounderBadgeProps>
         ref={ref}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className={`inline-flex items-center gap-1 font-bold rounded-full bg-gradient-to-r from-warning via-accent to-primary text-primary-foreground shadow-[0_0_16px_hsl(var(--warning)/0.4)] ${sizeClasses[size]}`}
+        className={`inline-flex items-center gap-1 font-semibold rounded-full border border-warning/40 bg-warning/10 text-warning ${sizeClasses[size]}`}
       >
         <Crown className={size === "sm" ? "h-2.5 w-2.5" : size === "md" ? "h-3 w-3" : "h-3.5 w-3.5"} />
         {showLabel && "Founder"}
