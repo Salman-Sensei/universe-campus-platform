@@ -30,6 +30,15 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function FullPageLoader() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-background">
+      <div className="h-8 w-8 rounded-full border-2 border-border border-t-primary animate-spin" />
+      <p className="text-sm text-muted-foreground">Loading UniVerse...</p>
+    </div>
+  );
+}
+
 function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const [checkingOnboarding, setCheckingOnboarding] = useState(true);
