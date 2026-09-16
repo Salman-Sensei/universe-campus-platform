@@ -247,9 +247,9 @@ export default function StudyPartner() {
           </div>
         ) : requests.length === 0 ? (
           <div className="text-center py-16">
-            <Users className="h-12 w-12 text-muted-foreground/40 mx-auto mb-3" />
+            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground font-medium">No study requests yet</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">Create one and find your study partner!</p>
+            <p className="text-sm text-muted-foreground mt-1">Create one and find your study partner!</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -289,24 +289,23 @@ export default function StudyPartner() {
                         <p className="text-sm text-foreground/90 leading-relaxed">{req.description}</p>
 
                         {/* Footer */}
-                        <div className="flex items-center justify-between pt-2 border-t border-border/30">
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-7 w-7">
+                        <div className="flex flex-col gap-3 pt-3 border-t border-border/30 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Avatar className="h-7 w-7 shrink-0">
                               <AvatarImage src={req.creator?.avatar_url || undefined} />
                               <AvatarFallback className="text-[10px] bg-surface text-primary font-bold">
                                 {(req.creator?.display_name || "U").slice(0, 2).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-xs text-muted-foreground truncate">
                               {req.creator?.display_name || req.creator?.username || "Unknown"}
                             </span>
-                            <span className="text-xs text-muted-foreground/60">·</span>
-                            <span className="text-xs text-muted-foreground/60">
-                              {req.participants.length} joined · {spotsLeft > 0 ? `${spotsLeft} spots left` : "Full"}
+                            <span className="text-xs text-muted-foreground whitespace-nowrap">
+                              · {req.participants.length} joined · {spotsLeft > 0 ? `${spotsLeft} spots left` : "Full"}
                             </span>
                           </div>
 
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 shrink-0">
                             {isOwner ? (
                               <Badge variant="outline" className="rounded-full text-xs">Your request</Badge>
                             ) : hasJoined ? (

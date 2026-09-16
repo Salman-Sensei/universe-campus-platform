@@ -267,9 +267,9 @@ export default function NotesResources() {
           </div>
         ) : resources.length === 0 ? (
           <div className="text-center py-16">
-            <FileText className="h-12 w-12 text-muted-foreground/40 mx-auto mb-3" />
+            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground font-medium">No resources found</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">Be the first to share study materials!</p>
+            <p className="text-sm text-muted-foreground mt-1">Be the first to share study materials!</p>
           </div>
         ) : (
           <div className="space-y-3">

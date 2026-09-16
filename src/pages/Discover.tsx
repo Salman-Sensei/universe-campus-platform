@@ -114,7 +114,7 @@ export default function Discover() {
         </motion.div>
 
         {/* Tabs */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -122,7 +122,7 @@ export default function Discover() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-xl transition-all duration-200 ${
+                className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-medium px-4 py-2 rounded-xl transition-all duration-200 ${
                   active
                     ? "gradient-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-surface-hover bg-surface/30"

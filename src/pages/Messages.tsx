@@ -137,7 +137,7 @@ export default function Messages() {
               <div className="p-8 text-center">
                 <MessageCircle className="h-10 w-10 text-muted-foreground/30 mx-auto mb-2" />
                 <p className="text-sm text-muted-foreground">No conversations yet</p>
-                <p className="text-xs text-muted-foreground/70 mt-1">Search for a user above to start chatting</p>
+                <p className="text-xs text-muted-foreground mt-1">Search for a user above to start chatting</p>
               </div>
             ) : (
               <div className="p-2">
@@ -301,7 +301,7 @@ export default function Messages() {
               <div className="text-center">
                 <MessageCircle className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
                 <p className="text-muted-foreground font-medium">Select a conversation</p>
-                <p className="text-sm text-muted-foreground/70 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Or search for a user to start chatting
                 </p>
               </div>

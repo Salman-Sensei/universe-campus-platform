@@ -410,6 +410,13 @@
     background: hsl(var(--background));
   }
 
+  /* The accent token is a dark surface colour, so accent-tinted text needs a
+     readable variant inside the app shell. */
+  .app-shell .text-accent,
+  .auth-shell .text-accent {
+    color: hsl(186 55% 74%);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       scroll-behavior: auto !important;

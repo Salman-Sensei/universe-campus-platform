@@ -15,6 +15,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
               <BrandMark className="hidden sm:inline-flex" />
+              <BrandMark compact className="sm:hidden" />
             </div>
             <div className="flex items-center gap-1">
               <NotificationDropdown />
