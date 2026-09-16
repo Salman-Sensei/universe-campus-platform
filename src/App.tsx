@@ -53,7 +53,7 @@ function OnboardingGuard({ children }: { children: React.ReactNode }) {
       });
   }, [user]);
 
-  if (loading || checkingOnboarding) return null;
+  if (loading || checkingOnboarding) return <FullPageLoader />;
   if (!user) return <Navigate to="/login" replace />;
   if (!onboardingDone) return <Navigate to="/onboarding" replace />;
   return <>{children}</>;
