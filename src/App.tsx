@@ -61,7 +61,7 @@ function OnboardingGuard({ children }: { children: React.ReactNode }) {
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) return null;
+  if (loading) return <FullPageLoader />;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
