@@ -69,7 +69,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   const { user, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading) return <FullPageLoader />;
 
   return (
     <Routes>
