@@ -213,9 +213,9 @@ export default function Marketplace() {
           </div>
         ) : listings.length === 0 ? (
           <div className="text-center py-16">
-            <Package className="h-12 w-12 text-muted-foreground/40 mx-auto mb-3" />
+            <Package className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground font-medium">No listings yet</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">Be the first to sell something!</p>
+            <p className="text-sm text-muted-foreground mt-1">Be the first to sell something!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

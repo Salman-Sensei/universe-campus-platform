@@ -247,9 +247,9 @@ export default function StudyPartner() {
           </div>
         ) : requests.length === 0 ? (
           <div className="text-center py-16">
-            <Users className="h-12 w-12 text-muted-foreground/40 mx-auto mb-3" />
+            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground font-medium">No study requests yet</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">Create one and find your study partner!</p>
+            <p className="text-sm text-muted-foreground mt-1">Create one and find your study partner!</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -300,8 +300,8 @@ export default function StudyPartner() {
                             <span className="text-xs text-muted-foreground">
                               {req.creator?.display_name || req.creator?.username || "Unknown"}
                             </span>
-                            <span className="text-xs text-muted-foreground/60">·</span>
-                            <span className="text-xs text-muted-foreground/60">
+                            <span className="text-xs text-muted-foreground">·</span>
+                            <span className="text-xs text-muted-foreground">
                               {req.participants.length} joined · {spotsLeft > 0 ? `${spotsLeft} spots left` : "Full"}
                             </span>
                           </div>
