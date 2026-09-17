@@ -8,6 +8,13 @@
       "when": 1789608694393,
       "tag": "0000_reset_admin_password",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789608727821,
+      "tag": "0001_remove_qa_test_user",
+      "breakpoints": true
     }
   ]
 }
