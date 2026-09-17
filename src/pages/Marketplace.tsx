@@ -84,6 +84,7 @@ export default function Marketplace() {
       let image_url: string | null = null;
 
       if (imageFile) {
+        await assertImageSafe(imageFile);
         const ext = imageFile.name.split(".").pop();
         const path = `${user.id}/${Date.now()}.${ext}`;
         const { error: uploadError } = await supabase.storage.from("marketplace").upload(path, imageFile);

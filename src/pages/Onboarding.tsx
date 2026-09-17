@@ -179,6 +179,13 @@ export default function Onboarding() {
 
     let avatarUrl = selectedAvatar;
     if (customAvatar) {
+      try {
+        await assertImageSafe(customAvatar);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "This image can't be uploaded.");
+        setSaving(false);
+        return;
+      }
       const ext = customAvatar.name.split(".").pop();
       const path = `${user.id}/avatar.${ext}`;
       await supabase.storage.from("avatars").upload(path, customAvatar, { upsert: true });
