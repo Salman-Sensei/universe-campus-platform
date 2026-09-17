@@ -20,6 +20,44 @@ interface PostWithMeta {
   is_liked: boolean;
 }
 
+interface RankContext {
+  followedIds: Set<string>;
+  interests: string[];
+  ownId: string;
+}
+
+/**
+ * Smart feed ranking: blends recency, engagement, and personal relevance.
+ * - Recency decays over ~36 hours so fresh posts still surface.
+ * - Engagement (likes/comments) pushes popular posts up.
+ * - Posts from people you follow and posts matching your subjects/interests get a boost.
+ */
+function rankPosts(posts: PostWithMeta[], ctx: RankContext): PostWithMeta[] {
+  const now = Date.now();
+  const scored = posts.map((p) => {
+    const ageHours = Math.max(0, (now - new Date(p.created_at).getTime()) / 36e5);
+    const recency = 100 * Math.exp(-ageHours / 36);
+    const engagement = Math.min(60, p.likes_count * 6 + p.comments_count * 4);
+    const followBoost = ctx.followedIds.has(p.user_id) ? 25 : 0;
+    const ownBoost = p.user_id === ctx.ownId ? 10 : 0;
+
+    let relevance = 0;
+    if (ctx.interests.length > 0) {
+      const text = `${p.content} ${p.profiles.display_name ?? ""} ${p.profiles.username ?? ""}`.toLowerCase();
+      for (const interest of ctx.interests) {
+        const needle = interest.trim().toLowerCase();
+        if (needle.length > 2 && text.includes(needle)) relevance += 8;
+      }
+      relevance = Math.min(relevance, 24);
+    }
+
+    return { post: p, score: recency + engagement + followBoost + ownBoost + relevance };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.map((s) => s.post);
+}
+
 export function usePosts(userId?: string) {
   const { user } = useAuth();
   const [posts, setPosts] = useState<PostWithMeta[]>([]);
@@ -42,12 +80,12 @@ export function usePosts(userId?: string) {
       return;
     }
 
-    // For feed: fetch posts from followed users + own posts
+    // For feed: fetch posts from followed users + own posts, then rank them
     if (user) {
-      const { data: follows } = await supabase
-        .from("follows")
-        .select("following_id")
-        .eq("follower_id", user.id);
+      const [{ data: follows }, { data: myProfile }] = await Promise.all([
+        supabase.from("follows").select("following_id").eq("follower_id", user.id),
+        supabase.from("profiles").select("interests, subjects").eq("user_id", user.id).maybeSingle(),
+      ]);
 
       const followedIds = (follows || []).map((f) => f.following_id);
       // Include own posts + followed users' posts
@@ -60,7 +98,16 @@ export function usePosts(userId?: string) {
         .order("created_at", { ascending: false });
 
       if (!postsData) { setLoading(false); return; }
-      await enrichAndSet(postsData);
+
+      const interests = [
+        ...((myProfile?.interests as string[] | null) ?? []),
+        ...((myProfile?.subjects as string[] | null) ?? []),
+      ];
+      await enrichAndSet(postsData, {
+        followedIds: new Set(followedIds),
+        interests,
+        ownId: user.id,
+      });
     } else {
       // Not logged in: show all posts
       const { data: postsData } = await supabase
@@ -73,7 +120,7 @@ export function usePosts(userId?: string) {
     }
   }, [user, userId]);
 
-  const enrichAndSet = async (postsData: any[]) => {
+  const enrichAndSet = async (postsData: any[], rankCtx?: RankContext) => {
     if (postsData.length === 0) { setPosts([]); setLoading(false); return; }
 
     const postIds = postsData.map((p) => p.id);
@@ -102,7 +149,7 @@ export function usePosts(userId?: string) {
       is_liked: userLikesSet.has(p.id),
     }));
 
-    setPosts(enriched);
+    setPosts(rankCtx ? rankPosts(enriched, rankCtx) : enriched);
     setLoading(false);
   };
 
