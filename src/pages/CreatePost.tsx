@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImagePlus, Send, X, Sparkles, PenLine } from "lucide-react";
 import { toast } from "sonner";
+import { assertImageSafe } from "@/lib/moderateImage";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -36,6 +37,13 @@ export default function CreatePost() {
 
     let image_url: string | null = null;
     if (imageFile) {
+      try {
+        await assertImageSafe(imageFile);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "This image can't be uploaded.");
+        setLoading(false);
+        return;
+      }
       const ext = imageFile.name.split(".").pop();
       const path = `${user.id}/${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage.from("posts").upload(path, imageFile);

@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { assertImageSafe } from "@/lib/moderateImage";
 import { Loader2, Type, ImageIcon } from "lucide-react";
 
 interface Props {
@@ -28,6 +29,7 @@ export function CreateStoryDialog({ open, onOpenChange, onCreated }: Props) {
       let imageUrl: string | null = null;
 
       if (mode === "image" && file) {
+        await assertImageSafe(file);
         const ext = file.name.split(".").pop();
         const path = `stories/${user.id}/${Date.now()}.${ext}`;
         const { error: uploadError } = await supabase.storage.from("posts").upload(path, file);
