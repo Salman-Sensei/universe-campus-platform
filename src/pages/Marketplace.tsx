@@ -114,7 +114,7 @@ export default function Marketplace() {
       setCategory("textbooks");
       setImageFile(null);
     },
-    onError: () => toast.error("Failed to create listing"),
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to create listing"),
   });
 
   const formatPrice = (p: number) => `Rs. ${p.toLocaleString()}`;
