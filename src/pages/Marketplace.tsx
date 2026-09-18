@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { assertImageSafe } from "@/lib/moderateImage";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Search, MessageCircle, Tag, Package, BookOpen, Monitor, Armchair, Calculator, Filter } from "lucide-react";
 

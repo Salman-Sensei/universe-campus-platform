@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Loader2, Camera, ImagePlus, Pencil, Save, Music, Quote, Tag, GraduationCap, BookOpen, Users, UserCheck, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { assertImageSafe } from "@/lib/moderateImage";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
 

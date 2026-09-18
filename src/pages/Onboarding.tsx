@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RoleBadge } from "@/components/RoleBadge";
 import { toast } from "sonner";
+import { assertImageSafe } from "@/lib/moderateImage";
 import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap, Check, ChevronRight, ChevronLeft, User, Camera, Users, BookOpen, Loader2, UserPlus, UserCheck } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
