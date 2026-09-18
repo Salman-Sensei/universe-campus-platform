@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Loader2, Camera, ImagePlus, Pencil, Save, Music, Quote, Tag, GraduationCap, BookOpen, Users, UserCheck, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { assertImageSafe } from "@/lib/moderateImage";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -99,23 +100,33 @@ export default function Profile() {
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user || !e.target.files?.[0]) return;
     const file = e.target.files[0];
-    const path = `${user.id}/avatar.${file.name.split(".").pop()}`;
-    await supabase.storage.from("avatars").upload(path, file, { upsert: true });
-    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
-    await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("user_id", user.id);
-    await refreshProfile();
-    toast.success("Avatar updated!");
+    try {
+      await assertImageSafe(file);
+      const path = `${user.id}/avatar.${file.name.split(".").pop()}`;
+      await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+      await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("user_id", user.id);
+      await refreshProfile();
+      toast.success("Avatar updated!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "This image can't be uploaded.");
+    }
   };
 
   const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user || !e.target.files?.[0]) return;
     const file = e.target.files[0];
-    const path = `${user.id}/banner.${file.name.split(".").pop()}`;
-    await supabase.storage.from("avatars").upload(path, file, { upsert: true });
-    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
-    await supabase.from("profiles").update({ banner_url: data.publicUrl }).eq("user_id", user.id);
-    await refreshProfile();
-    toast.success("Banner updated!");
+    try {
+      await assertImageSafe(file);
+      const path = `${user.id}/banner.${file.name.split(".").pop()}`;
+      await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+      await supabase.from("profiles").update({ banner_url: data.publicUrl }).eq("user_id", user.id);
+      await refreshProfile();
+      toast.success("Banner updated!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "This image can't be uploaded.");
+    }
   };
 
   if (loading) return (

@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { assertImageSafe } from "@/lib/moderateImage";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Search, MessageCircle, Tag, Package, BookOpen, Monitor, Armchair, Calculator, Filter } from "lucide-react";
 
@@ -113,7 +114,7 @@ export default function Marketplace() {
       setCategory("textbooks");
       setImageFile(null);
     },
-    onError: () => toast.error("Failed to create listing"),
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to create listing"),
   });
 
   const formatPrice = (p: number) => `Rs. ${p.toLocaleString()}`;
