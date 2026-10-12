@@ -96,6 +96,18 @@ AI runs through server-side functions, so no API keys live in the browser.
 ### Profile
 <p align="center"><img src="./screenshots/Profile_page.png" width="800"></p>
 
+### Messages
+<p align="center"><img src="./screenshots/Messages.png" width="800"></p>
+
+### Discover
+<p align="center"><img src="./screenshots/Discover.png" width="800"></p>
+
+### Confession Wall
+<p align="center"><img src="./screenshots/Confession_Wall.png" width="800"></p>
+
+### Sign in
+<p align="center"><img src="./screenshots/Login.png" width="800"></p>
+
 ---
 
 ## Architecture
