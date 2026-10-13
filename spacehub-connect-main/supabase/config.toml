@@ -1,4 +1,0 @@
-project_id = "dizftwhrjjlxnvthqgdj"
-
-[functions.moderate-confession]
-verify_jwt = false
