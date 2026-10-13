@@ -1,6 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+
+const PAGE_SIZE = 20;
+const POST_SELECT =
+  "*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url, role, founder_badge)";
 
 interface PostWithMeta {
   id: string;
@@ -28,9 +32,7 @@ interface RankContext {
 
 /**
  * Smart feed ranking: blends recency, engagement, and personal relevance.
- * - Recency decays over ~36 hours so fresh posts still surface.
- * - Engagement (likes/comments) pushes popular posts up.
- * - Posts from people you follow and posts matching your subjects/interests get a boost.
+ * Applied per loaded page so already-shown posts never jump around.
  */
 function rankPosts(posts: PostWithMeta[], ctx: RankContext): PostWithMeta[] {
   const now = Date.now();
@@ -43,7 +45,7 @@ function rankPosts(posts: PostWithMeta[], ctx: RankContext): PostWithMeta[] {
 
     let relevance = 0;
     if (ctx.interests.length > 0) {
-      const text = `${p.content} ${p.profiles.display_name ?? ""} ${p.profiles.username ?? ""}`.toLowerCase();
+      const text = `${p.content} ${p.profiles?.display_name ?? ""} ${p.profiles?.username ?? ""}`.toLowerCase();
       for (const interest of ctx.interests) {
         const needle = interest.trim().toLowerCase();
         if (needle.length > 2 && text.includes(needle)) relevance += 8;
@@ -62,98 +64,102 @@ export function usePosts(userId?: string) {
   const { user } = useAuth();
   const [posts, setPosts] = useState<PostWithMeta[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const pageRef = useRef(0);
+  const ctxRef = useRef<{ authorIds: string[] | null; rank?: RankContext }>({ authorIds: null });
+
+  const enrich = useCallback(async (postsData: any[]): Promise<PostWithMeta[]> => {
+    if (postsData.length === 0) return [];
+    const postIds = postsData.map((p) => p.id);
+
+    const [countsRes, userLikesRes] = await Promise.all([
+      supabase.rpc("get_post_counts", { p_post_ids: postIds }),
+      user
+        ? supabase.from("likes").select("post_id").eq("user_id", user.id).in("post_id", postIds)
+        : Promise.resolve({ data: [] as { post_id: string }[] }),
+    ]);
+
+    const counts = new Map<string, { likes: number; comments: number }>();
+    (countsRes.data ?? []).forEach((c: any) =>
+      counts.set(c.post_id, { likes: Number(c.likes_count) || 0, comments: Number(c.comments_count) || 0 }),
+    );
+    const userLikes = new Set((userLikesRes.data ?? []).map((l: any) => l.post_id));
+
+    return postsData.map((p) => ({
+      ...p,
+      profiles: p.profiles as PostWithMeta["profiles"],
+      likes_count: counts.get(p.id)?.likes ?? 0,
+      comments_count: counts.get(p.id)?.comments ?? 0,
+      is_liked: userLikes.has(p.id),
+    }));
+  }, [user]);
+
+  const fetchPage = useCallback(async (page: number) => {
+    const from = page * PAGE_SIZE;
+    let query = supabase
+      .from("posts")
+      .select(POST_SELECT)
+      .order("created_at", { ascending: false })
+      .range(from, from + PAGE_SIZE - 1);
+    const ids = ctxRef.current.authorIds;
+    if (ids) query = query.in("user_id", ids);
+
+    const { data } = await query;
+    const rows = data ?? [];
+    const enriched = await enrich(rows);
+    const rank = ctxRef.current.rank;
+    return { items: rank ? rankPosts(enriched, rank) : enriched, more: rows.length === PAGE_SIZE };
+  }, [enrich]);
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
+    pageRef.current = 0;
 
-    // If viewing a specific user's posts, fetch directly
     if (userId) {
-      const query = supabase
-        .from("posts")
-        .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url, role, founder_badge)")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
-
-      const { data: postsData } = await query;
-      if (!postsData) { setLoading(false); return; }
-      await enrichAndSet(postsData);
-      return;
-    }
-
-    // For feed: fetch posts from followed users + own posts, then rank them
-    if (user) {
+      ctxRef.current = { authorIds: [userId] };
+    } else if (user) {
       const [{ data: follows }, { data: myProfile }] = await Promise.all([
         supabase.from("follows").select("following_id").eq("follower_id", user.id),
         supabase.from("profiles").select("interests, subjects").eq("user_id", user.id).maybeSingle(),
       ]);
-
       const followedIds = (follows || []).map((f) => f.following_id);
-      // Include own posts + followed users' posts
-      const allIds = [...new Set([user.id, ...followedIds])];
-
-      const { data: postsData } = await supabase
-        .from("posts")
-        .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url, role, founder_badge)")
-        .in("user_id", allIds)
-        .order("created_at", { ascending: false });
-
-      if (!postsData) { setLoading(false); return; }
-
-      const interests = [
-        ...((myProfile?.interests as string[] | null) ?? []),
-        ...((myProfile?.subjects as string[] | null) ?? []),
-      ];
-      await enrichAndSet(postsData, {
-        followedIds: new Set(followedIds),
-        interests,
-        ownId: user.id,
-      });
+      ctxRef.current = {
+        authorIds: [...new Set([user.id, ...followedIds])],
+        rank: {
+          followedIds: new Set(followedIds),
+          interests: [
+            ...((myProfile?.interests as string[] | null) ?? []),
+            ...((myProfile?.subjects as string[] | null) ?? []),
+          ],
+          ownId: user.id,
+        },
+      };
     } else {
-      // Not logged in: show all posts
-      const { data: postsData } = await supabase
-        .from("posts")
-        .select("*, profiles!posts_user_id_profiles_fkey(username, display_name, avatar_url, role, founder_badge)")
-        .order("created_at", { ascending: false });
-
-      if (!postsData) { setLoading(false); return; }
-      await enrichAndSet(postsData);
+      ctxRef.current = { authorIds: null };
     }
-  }, [user, userId]);
 
-  const enrichAndSet = async (postsData: any[], rankCtx?: RankContext) => {
-    if (postsData.length === 0) { setPosts([]); setLoading(false); return; }
-
-    const postIds = postsData.map((p) => p.id);
-
-    const [likesRes, commentsRes, userLikesRes] = await Promise.all([
-      supabase.from("likes").select("post_id").in("post_id", postIds),
-      supabase.from("comments").select("post_id").in("post_id", postIds),
-      user
-        ? supabase.from("likes").select("post_id").eq("user_id", user.id).in("post_id", postIds)
-        : Promise.resolve({ data: [] }),
-    ]);
-
-    const likesMap: Record<string, number> = {};
-    const commentsMap: Record<string, number> = {};
-    const userLikesSet = new Set<string>();
-
-    likesRes.data?.forEach((l) => { likesMap[l.post_id] = (likesMap[l.post_id] || 0) + 1; });
-    commentsRes.data?.forEach((c) => { commentsMap[c.post_id] = (commentsMap[c.post_id] || 0) + 1; });
-    userLikesRes.data?.forEach((l) => userLikesSet.add(l.post_id));
-
-    const enriched: PostWithMeta[] = postsData.map((p) => ({
-      ...p,
-      profiles: p.profiles as unknown as PostWithMeta["profiles"],
-      likes_count: likesMap[p.id] || 0,
-      comments_count: commentsMap[p.id] || 0,
-      is_liked: userLikesSet.has(p.id),
-    }));
-
-    setPosts(rankCtx ? rankPosts(enriched, rankCtx) : enriched);
+    const { items, more } = await fetchPage(0);
+    setPosts(items);
+    setHasMore(more);
     setLoading(false);
-  };
+  }, [user, userId, fetchPage]);
+
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    const next = pageRef.current + 1;
+    const { items, more } = await fetchPage(next);
+    pageRef.current = next;
+    setPosts((prev) => {
+      const seen = new Set(prev.map((p) => p.id));
+      return [...prev, ...items.filter((p) => !seen.has(p.id))];
+    });
+    setHasMore(more);
+    setLoadingMore(false);
+  }, [fetchPage, hasMore, loadingMore]);
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 
-  return { posts, loading, refresh: fetchPosts };
+  return { posts, loading, loadingMore, hasMore, loadMore, refresh: fetchPosts };
 }
