@@ -66,7 +66,7 @@ export default function Feed() {
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-surface/40 px-3 py-1.5 rounded-full">
               <Sparkles className="h-3 w-3 text-primary" />
-              <span>Latest posts</span>
+              <span>For you</span>
             </div>
           </div>
 
