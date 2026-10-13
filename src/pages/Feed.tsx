@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { StoriesBar } from "@/components/StoriesBar";
 
 export default function Feed() {
-  const { posts, loading, refresh } = usePosts();
+  const { posts, loading, loadingMore, hasMore, loadMore, refresh } = usePosts();
 
   return (
     <AppLayout>
@@ -66,7 +66,7 @@ export default function Feed() {
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-surface/40 px-3 py-1.5 rounded-full">
               <Sparkles className="h-3 w-3 text-primary" />
-              <span>Latest posts</span>
+              <span>For you</span>
             </div>
           </div>
 
@@ -107,6 +107,13 @@ export default function Feed() {
                   <PostCard {...post} onRefresh={refresh} />
                 </motion.div>
               ))}
+              {hasMore && (
+                <div className="flex justify-center pt-2">
+                  <Button variant="outline" onClick={loadMore} disabled={loadingMore}>
+                    {loadingMore ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Loading</> : "Load more posts"}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>
